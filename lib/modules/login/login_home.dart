@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:unsplashed_client/theme/app_colors.dart';
@@ -13,6 +13,7 @@ class LoginHome extends StatefulWidget {
 class _LoginHomeState extends State<LoginHome> {
   TextEditingController loginController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  FirebaseAuth auth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -82,9 +83,26 @@ class _LoginHomeState extends State<LoginHome> {
                         padding: EdgeInsets.all(12),
                         child: Text("Login"),
                       ),
-                      onPressed: () {
-                        print(
-                            "login pressed -> ${loginController.text} / ${passwordController.text}");
+                      onPressed: () async {
+                        UserCredential? userCredential;
+                        try {
+                          userCredential = await FirebaseAuth.instance
+                              .signInWithEmailAndPassword(
+                                  email: loginController.text,
+                                  password: passwordController.text);
+                        } on FirebaseAuthException catch (e) {
+                          if (e.code == 'user-not-found') {
+                            print('No user found for that email.');
+                          } else if (e.code == 'wrong-password') {
+                            print('Wrong password provided for that user.');
+                          }
+                        }
+                        if (userCredential?.user?.uid == null) {
+                          print("failed login");
+                        } else {
+                          print(
+                              "login success! -> ${userCredential?.user?.uid}");
+                        }
                       },
                     )),
               ),
