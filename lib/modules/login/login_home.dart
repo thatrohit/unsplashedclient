@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:unsplashed_client/theme/app_colors.dart';
+import 'package:unsplashed_client/theme/app_theme.dart';
 
 class LoginHome extends StatefulWidget {
   const LoginHome({Key? key}) : super(key: key);
@@ -17,6 +18,7 @@ class _LoginHomeState extends State<LoginHome> {
   FirebaseAuth auth = FirebaseAuth.instance;
   bool _showEmailValidationMessage = false;
   bool _showPasswordValidationMessage = false;
+  bool _isLoading = false;
 
   bool validateEmail(String email) {
     bool emailValid = RegExp(
@@ -49,15 +51,9 @@ class _LoginHomeState extends State<LoginHome> {
                 width: 260,
               ),
             ),
-            const SizedBox(
+            SizedBox(
               height: 100,
-              child: Text(
-                "UNSPLASHED",
-                style: TextStyle(
-                  fontSize: 22,
-                  color: AppColors.white,
-                ),
-              ),
+              child: Text("UNSPLASHED", style: AppTheme.heroTextStyle),
             ),
             Container(
               constraints: const BoxConstraints(
@@ -68,13 +64,7 @@ class _LoginHomeState extends State<LoginHome> {
                 child: TextField(
                   cursorColor: AppColors.lightPurple,
                   controller: loginController,
-                  onChanged: (text) {
-                    setState(
-                      () {
-                        _showEmailValidationMessage = false;
-                      },
-                    );
-                  },
+                  onChanged: onChangeUsername,
                   decoration: InputDecoration(
                     errorText: _showEmailValidationMessage
                         ? "Invalid email address"
@@ -96,13 +86,7 @@ class _LoginHomeState extends State<LoginHome> {
                   cursorColor: AppColors.lightPurple,
                   obscureText: true,
                   controller: passwordController,
-                  onChanged: (text) {
-                    setState(
-                      () {
-                        _showPasswordValidationMessage = false;
-                      },
-                    );
-                  },
+                  onChanged: onChangePassword,
                   decoration: InputDecoration(
                     errorText: _showPasswordValidationMessage
                         ? "Password must be at least 6 letters long"
@@ -114,125 +98,73 @@ class _LoginHomeState extends State<LoginHome> {
                 ),
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  constraints: const BoxConstraints(
-                    minWidth: 200,
-                    maxWidth: 800,
-                  ),
-                  child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ElevatedButton(
-                        child: const Padding(
-                          padding: EdgeInsets.all(12),
-                          child: Text("Login"),
+            Center(
+              child: !_isLoading
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          constraints: const BoxConstraints(
+                            minWidth: 200,
+                            maxWidth: 800,
+                          ),
+                          child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ElevatedButton(
+                                child: const Padding(
+                                  padding: EdgeInsets.all(12),
+                                  child: Text("Login"),
+                                ),
+                                onPressed: () async {
+                                  validate();
+                                  if (_showEmailValidationMessage ||
+                                      _showPasswordValidationMessage) return;
+                                  UserCredential? userCredential;
+                                  userCredential =
+                                      await loginUser(userCredential, context);
+                                  if (userCredential?.user?.uid != null) {
+                                    final prefs =
+                                        await SharedPreferences.getInstance();
+                                    await prefs.setString(
+                                        'uid', (userCredential?.user?.uid)!);
+                                  }
+                                },
+                              )),
                         ),
-                        onPressed: () async {
-                          setState(
-                            () {
-                              if (!validateEmail(loginController.text)) {
-                                _showEmailValidationMessage = true;
-                              } else {
-                                _showEmailValidationMessage = false;
-                              }
-                              if (passwordController.text.length < 6) {
-                                _showPasswordValidationMessage = true;
-                              } else {
-                                _showPasswordValidationMessage = false;
-                              }
-                            },
-                          );
-                          if (_showEmailValidationMessage ||
-                              _showPasswordValidationMessage) return;
-                          UserCredential? userCredential;
-                          try {
-                            userCredential = await FirebaseAuth.instance
-                                .signInWithEmailAndPassword(
-                                    email: loginController.text,
-                                    password: passwordController.text);
-                          } on FirebaseAuthException catch (e) {
-                            if (e.code == 'user-not-found') {
-                              showAlertWithMessage(
-                                  context,
-                                  "Something went wrong",
-                                  "No user found for that email.");
-                            } else if (e.code == 'wrong-password') {
-                              showAlertWithMessage(
-                                  context,
-                                  "Something went wrong",
-                                  "email or password is incorrect.");
-                            }
-                          }
-                          if (userCredential?.user?.uid != null) {
-                            final prefs = await SharedPreferences.getInstance();
-                            await prefs.setString(
-                                'uid', (userCredential?.user?.uid)!);
-                          }
-                        },
-                      )),
-                ),
-                Container(
-                  constraints: const BoxConstraints(
-                    minWidth: 200,
-                    maxWidth: 800,
-                  ),
-                  child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ElevatedButton(
-                        child: const Padding(
-                          padding: EdgeInsets.all(12),
-                          child: Text("Register"),
+                        Container(
+                          constraints: const BoxConstraints(
+                            minWidth: 200,
+                            maxWidth: 800,
+                          ),
+                          child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ElevatedButton(
+                                child: const Padding(
+                                  padding: EdgeInsets.all(12),
+                                  child: Text("Register"),
+                                ),
+                                onPressed: () async {
+                                  validate();
+                                  if (_showEmailValidationMessage ||
+                                      _showPasswordValidationMessage) return;
+                                  UserCredential? userCredential;
+                                  userCredential = await registerUser(
+                                      userCredential, context);
+                                  if (userCredential?.user?.uid != null) {
+                                    showAlertWithMessage(
+                                        context,
+                                        "Successfully registered ${loginController.text}",
+                                        "Press OK to continue in the app");
+                                  }
+                                },
+                              )),
                         ),
-                        onPressed: () async {
-                          setState(
-                            () {
-                              if (!validateEmail(loginController.text)) {
-                                _showEmailValidationMessage = true;
-                              } else {
-                                _showEmailValidationMessage = false;
-                              }
-                              if (passwordController.text.length < 6) {
-                                _showPasswordValidationMessage = true;
-                              } else {
-                                _showPasswordValidationMessage = false;
-                              }
-                            },
-                          );
-                          if (_showEmailValidationMessage ||
-                              _showPasswordValidationMessage) return;
-                          UserCredential? userCredential;
-                          try {
-                            userCredential = await FirebaseAuth.instance
-                                .createUserWithEmailAndPassword(
-                                    email: loginController.text,
-                                    password: passwordController.text);
-                          } on FirebaseAuthException catch (e) {
-                            if (e.code == 'weak-password') {
-                              showAlertWithMessage(
-                                  context,
-                                  "Something went wrong",
-                                  "The password provided is too weak.");
-                            } else if (e.code == 'email-already-in-use') {
-                              showAlertWithMessage(
-                                  context,
-                                  "Something went wrong",
-                                  "The account already exists for that email.");
-                            }
-                          } catch (e) {
-                            print(e);
-                          }
-                          if (userCredential?.user?.uid != null) {
-                            showAlertWithMessage(
-                                context,
-                                "Successfully registered ${loginController.text}",
-                                "Press OK to continue in the app");
-                          }
-                        },
-                      )),
-                ),
-              ],
+                      ],
+                    )
+                  : const Padding(
+                      padding: EdgeInsets.fromLTRB(0, 8, 0, 0),
+                      child: CircularProgressIndicator.adaptive(),
+                    ),
             ),
             Expanded(
               child: Align(
@@ -251,6 +183,88 @@ class _LoginHomeState extends State<LoginHome> {
           ],
         ),
       ),
+    );
+  }
+
+  Future<UserCredential?> loginUser(
+      UserCredential? userCredential, BuildContext context) async {
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: loginController.text, password: passwordController.text);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        showAlertWithMessage(
+            context, "Something went wrong", "No user found for that email.");
+      } else if (e.code == 'wrong-password') {
+        showAlertWithMessage(
+            context, "Something went wrong", "email or password is incorrect.");
+      }
+    }
+    setState(() {
+      _isLoading = false;
+    });
+    return userCredential;
+  }
+
+  Future<UserCredential?> registerUser(
+      UserCredential? userCredential, BuildContext context) async {
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+              email: loginController.text, password: passwordController.text);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        showAlertWithMessage(context, "Something went wrong",
+            "The password provided is too weak.");
+      } else if (e.code == 'email-already-in-use') {
+        showAlertWithMessage(context, "Something went wrong",
+            "The account already exists for that email.");
+      }
+    } catch (e) {
+      print(e);
+    }
+    setState(() {
+      _isLoading = false;
+    });
+    return userCredential;
+  }
+
+  void validate() {
+    setState(
+      () {
+        if (!validateEmail(loginController.text)) {
+          _showEmailValidationMessage = true;
+        } else {
+          _showEmailValidationMessage = false;
+        }
+        if (passwordController.text.length < 6) {
+          _showPasswordValidationMessage = true;
+        } else {
+          _showPasswordValidationMessage = false;
+        }
+      },
+    );
+  }
+
+  void onChangePassword(text) {
+    setState(
+      () {
+        _showPasswordValidationMessage = false;
+      },
+    );
+  }
+
+  void onChangeUsername(text) {
+    setState(
+      () {
+        _showEmailValidationMessage = false;
+      },
     );
   }
 

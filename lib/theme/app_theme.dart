@@ -36,4 +36,11 @@ class AppTheme {
       ),
     ),
   );
+
+  static TextStyle heroTextStyle = const TextStyle(
+    color: AppColors.lightPurple,
+    fontSize: 22,
+    fontStyle: FontStyle.italic,
+    letterSpacing: 0.5,
+  );
 }
