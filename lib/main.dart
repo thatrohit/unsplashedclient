@@ -18,11 +18,12 @@ class UnsplashedClientApp extends StatelessWidget {
     return MaterialApp(
       theme: AppTheme.appTheme,
       home: Scaffold(
-        appBar: AppBar(
-          title: const Center(
-            child: Text("Unsplashed"),
-          ),
-        ),
+        appBar: null,
+        // appBar: AppBar(
+        //   title: const Center(
+        //     child: Text("Unsplashed"),
+        //   ),
+        // ),
         body: const LoginHome(),
       ),
     );
