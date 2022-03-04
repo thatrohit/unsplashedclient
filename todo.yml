@@ -5,3 +5,9 @@ Third_March_Thursday:
     3: 'login home ui ✅'
     4: 'common styles ❌'
     5: 'validation ✅'
+
+Fourth_March_Friday:
+    1: Write API code - home screen ✅
+    2. Write API code - details screen ✅
+    3. Write API code - favorite screen ✅
+    4: Start home controller store ✅

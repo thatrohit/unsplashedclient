@@ -1,8 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:unsplashed_client/firebase_options.dart';
-import 'package:unsplashed_client/modules/login/login_home.dart';
+import 'package:unsplashed_client/modules/login/login_view.dart';
 import 'package:unsplashed_client/theme/app_theme.dart';
+import 'package:unsplashed_client/utils/scroll_behavior.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,16 +17,9 @@ class UnsplashedClientApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      scrollBehavior: UnsplashedCustomScrollBehavior(),
       theme: AppTheme.appTheme,
-      home: Scaffold(
-        appBar: null,
-        // appBar: AppBar(
-        //   title: const Center(
-        //     child: Text("Unsplashed"),
-        //   ),
-        // ),
-        body: const LoginHome(),
-      ),
+      home: const LoginHome(),
     );
   }
 }
