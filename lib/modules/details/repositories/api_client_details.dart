@@ -1,11 +1,13 @@
 import 'dart:convert';
 
+import 'package:unsplashed_client/modules/details/repositories/details_repository.dart';
 import 'package:unsplashed_client/utils/api_helper.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../models/details.dart';
 
-class DetailsApiClient with UnsplashedApi {
+class DetailsApiClient implements DetailsRepository {
+  @override
   Future<DetailsResult> getPhotoDetails(String id) async {
     final apiRequest =
         Uri.parse(UnsplashedApi.baseUrl + UnsplashedApi.getEndpointDetails(id));

@@ -20,6 +20,7 @@ class _LoginHomeState extends State<LoginHome> {
   bool _showEmailValidationMessage = false;
   bool _showPasswordValidationMessage = false;
   bool _isLoading = false;
+  bool _useLocalRepo = false;
 
   bool validateEmail(String email) {
     bool emailValid = RegExp(
@@ -30,8 +31,6 @@ class _LoginHomeState extends State<LoginHome> {
 
   @override
   Widget build(BuildContext context) {
-    loginController.text = "rohitgupta88@outlook.com";
-    passwordController.text = "unreal@123";
     return SingleChildScrollView(
       child: Material(
         child: Container(
@@ -178,14 +177,34 @@ class _LoginHomeState extends State<LoginHome> {
               Expanded(
                 child: Align(
                   alignment: Alignment.bottomCenter,
-                  child: Container(
-                    constraints: BoxConstraints(
-                        maxHeight: 24,
-                        minWidth: MediaQuery.of(context).size.width),
-                    color: AppColors.background,
-                    child: const Center(
-                      child: Text("Unsplash Client - v1.0.0"),
-                    ),
+                  child: Column(
+                    children: [
+                      CheckboxListTile(
+                        controlAffinity: ListTileControlAffinity.leading,
+                        checkColor: AppColors.primary,
+                        activeColor: AppColors.lightRed,
+                        title: Text(
+                            'Check this to use local json instead Unsplash API'),
+                        value: _useLocalRepo,
+                        onChanged: (bool? value) async {
+                          setState(() {
+                            _useLocalRepo = value ?? false;
+                            print("check change -> $value");
+                          });
+                          final prefs = await SharedPreferences.getInstance();
+                          await prefs.setBool('useLocalRepo', value ?? true);
+                        },
+                      ),
+                      Container(
+                        constraints: BoxConstraints(
+                            maxHeight: 24,
+                            minWidth: MediaQuery.of(context).size.width),
+                        color: AppColors.background,
+                        child: const Center(
+                          child: Text("Unsplash Client - v1.0.0"),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               )

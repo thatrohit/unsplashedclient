@@ -39,8 +39,8 @@ class AppTheme {
 
   static TextStyle heroTextStyle = const TextStyle(
     color: AppColors.lightPurple,
-    fontSize: 22,
-    fontStyle: FontStyle.italic,
-    letterSpacing: 0.5,
+    fontSize: 24,
+    fontWeight: FontWeight.bold,
+    letterSpacing: 3,
   );
 }

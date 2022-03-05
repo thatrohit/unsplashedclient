@@ -9,49 +9,98 @@ part of 'home_controller.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$HomeController on _HomeController, Store {
-  final _$isLoadingAtom = Atom(name: '_HomeController.isLoading');
+  final _$isLoadingDesktopWallpapersAtom =
+      Atom(name: '_HomeController.isLoadingDesktopWallpapers');
 
   @override
-  bool get isLoading {
-    _$isLoadingAtom.reportRead();
-    return super.isLoading;
+  bool get isLoadingDesktopWallpapers {
+    _$isLoadingDesktopWallpapersAtom.reportRead();
+    return super.isLoadingDesktopWallpapers;
   }
 
   @override
-  set isLoading(bool value) {
-    _$isLoadingAtom.reportWrite(value, super.isLoading, () {
-      super.isLoading = value;
+  set isLoadingDesktopWallpapers(bool value) {
+    _$isLoadingDesktopWallpapersAtom
+        .reportWrite(value, super.isLoadingDesktopWallpapers, () {
+      super.isLoadingDesktopWallpapers = value;
     });
   }
 
-  final _$wallpapersAtom = Atom(name: '_HomeController.wallpapers');
+  final _$isLoadingMobileWallpapersAtom =
+      Atom(name: '_HomeController.isLoadingMobileWallpapers');
 
   @override
-  SearchResult? get wallpapers {
-    _$wallpapersAtom.reportRead();
-    return super.wallpapers;
+  bool get isLoadingMobileWallpapers {
+    _$isLoadingMobileWallpapersAtom.reportRead();
+    return super.isLoadingMobileWallpapers;
   }
 
   @override
-  set wallpapers(SearchResult? value) {
-    _$wallpapersAtom.reportWrite(value, super.wallpapers, () {
-      super.wallpapers = value;
+  set isLoadingMobileWallpapers(bool value) {
+    _$isLoadingMobileWallpapersAtom
+        .reportWrite(value, super.isLoadingMobileWallpapers, () {
+      super.isLoadingMobileWallpapers = value;
     });
   }
 
-  final _$getWallpapersAsyncAction =
-      AsyncAction('_HomeController.getWallpapers');
+  final _$desktopWallpapersAtom =
+      Atom(name: '_HomeController.desktopWallpapers');
 
   @override
-  Future<SearchResult?> getWallpapers() {
-    return _$getWallpapersAsyncAction.run(() => super.getWallpapers());
+  SearchResult? get desktopWallpapers {
+    _$desktopWallpapersAtom.reportRead();
+    return super.desktopWallpapers;
+  }
+
+  @override
+  set desktopWallpapers(SearchResult? value) {
+    _$desktopWallpapersAtom.reportWrite(value, super.desktopWallpapers, () {
+      super.desktopWallpapers = value;
+    });
+  }
+
+  final _$mobileWallpapersAtom = Atom(name: '_HomeController.mobileWallpapers');
+
+  @override
+  SearchResult? get mobileWallpapers {
+    _$mobileWallpapersAtom.reportRead();
+    return super.mobileWallpapers;
+  }
+
+  @override
+  set mobileWallpapers(SearchResult? value) {
+    _$mobileWallpapersAtom.reportWrite(value, super.mobileWallpapers, () {
+      super.mobileWallpapers = value;
+    });
+  }
+
+  final _$getDesktopWallpapersAsyncAction =
+      AsyncAction('_HomeController.getDesktopWallpapers');
+
+  @override
+  Future<SearchResult?> getDesktopWallpapers(
+      {ResponseRepository repository = ResponseRepository.web}) {
+    return _$getDesktopWallpapersAsyncAction
+        .run(() => super.getDesktopWallpapers(repository: repository));
+  }
+
+  final _$getMobileWallpapersAsyncAction =
+      AsyncAction('_HomeController.getMobileWallpapers');
+
+  @override
+  Future<SearchResult?> getMobileWallpapers(
+      {ResponseRepository repository = ResponseRepository.web}) {
+    return _$getMobileWallpapersAsyncAction
+        .run(() => super.getMobileWallpapers(repository: repository));
   }
 
   @override
   String toString() {
     return '''
-isLoading: ${isLoading},
-wallpapers: ${wallpapers}
+isLoadingDesktopWallpapers: ${isLoadingDesktopWallpapers},
+isLoadingMobileWallpapers: ${isLoadingMobileWallpapers},
+desktopWallpapers: ${desktopWallpapers},
+mobileWallpapers: ${mobileWallpapers}
     ''';
   }
 }

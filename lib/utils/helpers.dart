@@ -1,0 +1,4 @@
+enum ResponseRepository {
+  web,
+  local,
+}
