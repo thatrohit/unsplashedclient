@@ -17,9 +17,10 @@ class UnsplashedClientApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      scrollBehavior: UnsplashedCustomScrollBehavior(),
-      theme: AppTheme.appTheme,
-      home: const LoginHome(),
-    );
+        scrollBehavior: UnsplashedCustomScrollBehavior(),
+        theme: AppTheme.appTheme,
+        home: const Scaffold(
+          body: LoginHome(),
+        ));
   }
 }

@@ -14,6 +14,7 @@ class LoginHome extends StatefulWidget {
 }
 
 class _LoginHomeState extends State<LoginHome> {
+  SharedPreferences? prefs;
   TextEditingController loginController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   FirebaseAuth auth = FirebaseAuth.instance;
@@ -21,6 +22,16 @@ class _LoginHomeState extends State<LoginHome> {
   bool _showPasswordValidationMessage = false;
   bool _isLoading = false;
   bool _useLocalRepo = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _makeAsyncCalls();
+  }
+
+  void _makeAsyncCalls() async {
+    prefs = await SharedPreferences.getInstance();
+  }
 
   bool validateEmail(String email) {
     bool emailValid = RegExp(
@@ -31,11 +42,12 @@ class _LoginHomeState extends State<LoginHome> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Material(
+    loginController.text = 'rohitgupta88@outlook.com';
+    passwordController.text = 'unreal@123';
+    return Material(
+      child: SingleChildScrollView(
         child: Container(
           height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
           decoration: const BoxDecoration(
               gradient: LinearGradient(
                   colors: AppColors.bgGradient,
@@ -44,26 +56,25 @@ class _LoginHomeState extends State<LoginHome> {
           child: Column(
             children: [
               Center(
-                child: SizedBox(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(12, 0, 0, 0),
-                    child: Lottie.network(
-                        'https://assets1.lottiefiles.com/packages/lf20_hymrcjeq.json'),
-                  ),
-                  height: 260,
-                  width: 260,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 50, 0, 0),
+                  child: Lottie.network(
+                      'https://assets1.lottiefiles.com/packages/lf20_hymrcjeq.json',
+                      width: 200,
+                      height: 200),
                 ),
               ),
-              SizedBox(
-                height: 100,
-                child: Text("UNSPLASHED", style: AppTheme.heroTextStyle),
+              Text(
+                "UNSPLASHED",
+                style: AppTheme.heroTextStyle,
+                textAlign: TextAlign.center,
               ),
               Container(
                 constraints: const BoxConstraints(
                   maxWidth: 800,
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.fromLTRB(12, 40, 12, 0),
                   child: TextField(
                     cursorColor: AppColors.lightPurple,
                     controller: loginController,
@@ -84,7 +95,7 @@ class _LoginHomeState extends State<LoginHome> {
                   maxWidth: 800,
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
                   child: TextField(
                     cursorColor: AppColors.lightPurple,
                     obscureText: true,
@@ -126,15 +137,36 @@ class _LoginHomeState extends State<LoginHome> {
                                     userCredential = await loginUser(
                                         userCredential, context);
                                     if (userCredential?.user?.uid != null) {
-                                      final prefs =
-                                          await SharedPreferences.getInstance();
-                                      await prefs.setString(
+                                      // final prefs =
+                                      //     await SharedPreferences.getInstance();
+                                      // await prefs.setString(
+                                      //     'uid', (userCredential?.user?.uid)!);
+                                      // await prefs.setString(
+                                      //     'username', (loginController.text));
+                                      //---------
+                                      // saveToSharedPrefs(
+                                      //         userCredential?.user?.uid ?? "",
+                                      //         userCredential?.user?.email ?? "")
+                                      //     .then((result) => Navigator.push(
+                                      //         context,
+                                      //         MaterialPageRoute(
+                                      //             builder: (context) =>
+                                      //                 HomePage())));
+                                      print(
+                                          "SUCCESS FIREBASE AUTH | prefs -> $prefs");
+                                      await prefs?.setString(
                                           'uid', (userCredential?.user?.uid)!);
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  HomePage()));
+                                      (prefs?.setString(
+                                              'email', (loginController.text)))
+                                          ?.then((value) {
+                                        print("SUCCESS -> $value");
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    HomePage())).catchError(
+                                            (_) => print("FAILED error"));
+                                      });
                                     }
                                   },
                                 )),
@@ -174,37 +206,37 @@ class _LoginHomeState extends State<LoginHome> {
                         child: CircularProgressIndicator.adaptive(),
                       ),
               ),
+              CheckboxListTile(
+                controlAffinity: ListTileControlAffinity.leading,
+                checkColor: AppColors.primary,
+                activeColor: AppColors.lightRed,
+                title: const Text(
+                    'Check this to use local json instead Unsplash API'),
+                value: _useLocalRepo,
+                onChanged: (bool? value) async {
+                  setState(() {
+                    _useLocalRepo = value ?? false;
+                    print("check change -> $value");
+                  });
+                  final prefs = await SharedPreferences.getInstance();
+                  await prefs.setBool('useLocalRepo', value ?? true);
+                },
+              ),
               Expanded(
                 child: Align(
                   alignment: Alignment.bottomCenter,
-                  child: Column(
-                    children: [
-                      CheckboxListTile(
-                        controlAffinity: ListTileControlAffinity.leading,
-                        checkColor: AppColors.primary,
-                        activeColor: AppColors.lightRed,
-                        title: Text(
-                            'Check this to use local json instead Unsplash API'),
-                        value: _useLocalRepo,
-                        onChanged: (bool? value) async {
-                          setState(() {
-                            _useLocalRepo = value ?? false;
-                            print("check change -> $value");
-                          });
-                          final prefs = await SharedPreferences.getInstance();
-                          await prefs.setBool('useLocalRepo', value ?? true);
-                        },
+                  child: Container(
+                    constraints: BoxConstraints(
+                        maxHeight: 24,
+                        minWidth: MediaQuery.of(context).size.width),
+                    color: AppColors.grayBG,
+                    child: Padding(
+                      padding: const EdgeInsets.all(1.0),
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Image.asset('assets/ps.png'),
                       ),
-                      Container(
-                        constraints: BoxConstraints(
-                            maxHeight: 24,
-                            minWidth: MediaQuery.of(context).size.width),
-                        color: AppColors.background,
-                        child: const Center(
-                          child: Text("Unsplash Client - v1.0.0"),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               )

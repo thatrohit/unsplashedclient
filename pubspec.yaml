@@ -65,6 +65,7 @@ flutter:
   assets:
     - assets/mock/desktop_wallpapers.json
     - assets/mock/mobile_wallpapers.json
+    - assets/ps.png
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

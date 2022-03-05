@@ -8,4 +8,5 @@ class AppColors {
   static const white = Color(0xFFFFFFFF);
   static const lightPurple = Color(0xFFD2C1F6);
   static const lightRed = Color(0xFFEFBABA);
+  static const grayBG = Color(0xFF232526);
 }

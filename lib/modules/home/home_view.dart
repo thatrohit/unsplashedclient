@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:unsplashed_client/models/search.dart';
 import 'package:unsplashed_client/modules/home/home_controller.dart';
@@ -16,15 +17,16 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  SharedPreferences? prefs;
   @override
   void initState() {
     super.initState();
-    _makeInitApiCalls();
+    _makeInitAsyncCalls();
   }
 
-  Future<void> _makeInitApiCalls() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool useLocalRepo = prefs.getBool('useLocalRepo') ?? false;
+  Future<void> _makeInitAsyncCalls() async {
+    prefs = await SharedPreferences.getInstance();
+    bool useLocalRepo = prefs?.getBool('useLocalRepo') ?? false;
     await homeController.getDesktopWallpapers(
         repository:
             useLocalRepo ? ResponseRepository.local : ResponseRepository.web);
@@ -37,6 +39,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    print("getting from shared ${prefs?.getString('email')}");
     return SingleChildScrollView(
       child: Material(
         child: Container(
@@ -47,69 +50,102 @@ class _HomePageState extends State<HomePage> {
                   colors: AppColors.bgGradient,
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight)),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              NamedDivider(
-                "DESKTOP",
-              ),
-              SizedBox(
-                height: 200.0,
-                child: Observer(
-                  builder: (_) => homeController.isLoadingDesktopWallpapers
-                      ? const Center(
-                          child: CircularProgressIndicator.adaptive())
-                      : ListView.builder(
-                          physics: const ClampingScrollPhysics(),
-                          shrinkWrap: true,
-                          scrollDirection: Axis.horizontal,
-                          itemCount: homeController
-                                  .desktopWallpapers?.results?.length ??
-                              0,
-                          itemBuilder: (BuildContext context, int index) =>
-                              Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
-                            child: HorizontalListItemTemplate(
-                              results:
-                                  homeController.desktopWallpapers?.results,
-                              height: 200,
-                              width: 300,
-                              index: index,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  visualDensity: VisualDensity.adaptivePlatformDensity,
+                  tileColor: AppColors.lightPurple,
+                  leading: Lottie.network(
+                    'https://assets2.lottiefiles.com/packages/lf20_jX856c.json',
+                    repeat: false,
+                    height: 200,
+                  ),
+                  subtitle: const Text(
+                    "You don't have any favorite images yet",
+                    style: TextStyle(
+                      fontSize: 12,
+                    ),
+                  ),
+                  title: Text(
+                    "Logged in as ${prefs?.getString('email') ?? ''}",
+                    style: const TextStyle(
+                      fontSize: 12,
+                    ),
+                  ),
+                  trailing: IconButton(
+                    icon: Icon(Icons.logout),
+                    onPressed: () {
+                      prefs?.remove('email');
+                      prefs?.remove('uid');
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+                NamedDivider(
+                  "DESKTOP",
+                ),
+                SizedBox(
+                  height: 200.0,
+                  child: Observer(
+                    builder: (_) => homeController.isLoadingDesktopWallpapers
+                        ? const Center(
+                            child: CircularProgressIndicator.adaptive())
+                        : ListView.builder(
+                            physics: const ClampingScrollPhysics(),
+                            shrinkWrap: true,
+                            scrollDirection: Axis.horizontal,
+                            itemCount: homeController
+                                    .desktopWallpapers?.results?.length ??
+                                0,
+                            itemBuilder: (BuildContext context, int index) =>
+                                Padding(
+                              padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
+                              child: HorizontalListItemTemplate(
+                                results:
+                                    homeController.desktopWallpapers?.results,
+                                height: 200,
+                                width: 300,
+                                index: index,
+                              ),
                             ),
                           ),
-                        ),
+                  ),
                 ),
-              ),
-              NamedDivider(
-                "MOBILE",
-              ),
-              SizedBox(
-                height: 300.0,
-                child: Observer(
-                  builder: (_) => homeController.isLoadingMobileWallpapers
-                      ? const Center(
-                          child: CircularProgressIndicator.adaptive())
-                      : ListView.builder(
-                          physics: const ClampingScrollPhysics(),
-                          shrinkWrap: true,
-                          scrollDirection: Axis.horizontal,
-                          itemCount: homeController
-                                  .mobileWallpapers?.results?.length ??
-                              0,
-                          itemBuilder: (BuildContext context, int index) =>
-                              Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
-                            child: HorizontalListItemTemplate(
-                              results: homeController.mobileWallpapers?.results,
-                              height: 300,
-                              width: 220,
-                              index: index,
+                NamedDivider(
+                  "MOBILE",
+                ),
+                SizedBox(
+                  height: 300.0,
+                  child: Observer(
+                    builder: (_) => homeController.isLoadingMobileWallpapers
+                        ? const Center(
+                            child: CircularProgressIndicator.adaptive())
+                        : ListView.builder(
+                            physics: const ClampingScrollPhysics(),
+                            shrinkWrap: true,
+                            scrollDirection: Axis.horizontal,
+                            itemCount: homeController
+                                    .mobileWallpapers?.results?.length ??
+                                0,
+                            itemBuilder: (BuildContext context, int index) =>
+                                Padding(
+                              padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
+                              child: HorizontalListItemTemplate(
+                                results:
+                                    homeController.mobileWallpapers?.results,
+                                height: 300,
+                                width: 220,
+                                index: index,
+                              ),
                             ),
                           ),
-                        ),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
