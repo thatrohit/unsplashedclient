@@ -7,7 +7,7 @@ import 'package:unsplashed_client/theme/app_theme.dart';
 import 'package:unsplashed_client/utils/scroll_behavior.dart';
 
 void main() async {
-  if (defaultTargetPlatform != TargetPlatform.windows) {
+  if (defaultTargetPlatform == TargetPlatform.windows && kIsWeb) {
     WidgetsFlutterBinding.ensureInitialized();
     await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform);

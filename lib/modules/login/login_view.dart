@@ -96,7 +96,8 @@ class _LoginHomeState extends State<LoginHome> {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
-                  child: defaultTargetPlatform != TargetPlatform.windows
+                  child: defaultTargetPlatform == TargetPlatform.windows &&
+                          kIsWeb
                       ? TextField(
                           cursorColor: AppColors.lightPurple,
                           obscureText: true,
@@ -129,7 +130,7 @@ class _LoginHomeState extends State<LoginHome> {
                           )),
                 ),
               ),
-              defaultTargetPlatform != TargetPlatform.windows
+              defaultTargetPlatform == TargetPlatform.windows && kIsWeb
                   ? Center(
                       child: !_isLoading
                           ? Row(
