@@ -17,7 +17,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  SharedPreferences? prefs;
+  final HomeController homeController = HomeController();
+
   @override
   void initState() {
     super.initState();
@@ -25,21 +26,19 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _makeInitAsyncCalls() async {
-    prefs = await SharedPreferences.getInstance();
-    bool useLocalRepo = prefs?.getBool('useLocalRepo') ?? false;
-    await homeController.getDesktopWallpapers(
-        repository:
-            useLocalRepo ? ResponseRepository.local : ResponseRepository.web);
-    await homeController.getMobileWallpapers(
-        repository:
-            useLocalRepo ? ResponseRepository.local : ResponseRepository.web);
+    await homeController.initSharedPreferences().then((value) async {
+      var useLocalRepo = value?.getBool('useLocalRepo') ?? false;
+      await homeController.getDesktopWallpapers(
+          repository:
+              useLocalRepo ? ResponseRepository.local : ResponseRepository.web);
+      await homeController.getMobileWallpapers(
+          repository:
+              useLocalRepo ? ResponseRepository.local : ResponseRepository.web);
+    });
   }
-
-  final HomeController homeController = HomeController();
 
   @override
   Widget build(BuildContext context) {
-    print("getting from shared ${prefs?.getString('email')}");
     return SingleChildScrollView(
       child: Material(
         child: Container(
@@ -55,33 +54,35 @@ class _HomePageState extends State<HomePage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                ListTile(
-                  visualDensity: VisualDensity.adaptivePlatformDensity,
-                  tileColor: AppColors.lightPurple,
-                  leading: Lottie.network(
-                    'https://assets2.lottiefiles.com/packages/lf20_jX856c.json',
-                    repeat: false,
-                    height: 200,
-                  ),
-                  subtitle: const Text(
-                    "You don't have any favorite images yet",
-                    style: TextStyle(
-                      fontSize: 12,
+                Observer(
+                  builder: (_) => ListTile(
+                    visualDensity: VisualDensity.adaptivePlatformDensity,
+                    tileColor: AppColors.lightPurple,
+                    leading: Lottie.network(
+                      'https://assets2.lottiefiles.com/packages/lf20_jX856c.json',
+                      repeat: false,
+                      height: 200,
                     ),
-                  ),
-                  title: Text(
-                    "Logged in as ${prefs?.getString('email') ?? ''}",
-                    style: const TextStyle(
-                      fontSize: 12,
+                    subtitle: const Text(
+                      "You don't have any favorite images yet",
+                      style: TextStyle(
+                        fontSize: 12,
+                      ),
                     ),
-                  ),
-                  trailing: IconButton(
-                    icon: Icon(Icons.logout),
-                    onPressed: () {
-                      prefs?.remove('email');
-                      prefs?.remove('uid');
-                      Navigator.pop(context);
-                    },
+                    title: Text(
+                      "Logged in as ${homeController.prefs?.getString('email') ?? ''}",
+                      style: const TextStyle(
+                        fontSize: 12,
+                      ),
+                    ),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.logout),
+                      onPressed: () {
+                        homeController.prefs?.remove('email');
+                        homeController.prefs?.remove('uid');
+                        Navigator.pop(context);
+                      },
+                    ),
                   ),
                 ),
                 NamedDivider(

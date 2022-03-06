@@ -74,6 +74,30 @@ mixin _$HomeController on _HomeController, Store {
     });
   }
 
+  final _$prefsAtom = Atom(name: '_HomeController.prefs');
+
+  @override
+  SharedPreferences? get prefs {
+    _$prefsAtom.reportRead();
+    return super.prefs;
+  }
+
+  @override
+  set prefs(SharedPreferences? value) {
+    _$prefsAtom.reportWrite(value, super.prefs, () {
+      super.prefs = value;
+    });
+  }
+
+  final _$initSharedPreferencesAsyncAction =
+      AsyncAction('_HomeController.initSharedPreferences');
+
+  @override
+  Future<SharedPreferences?> initSharedPreferences() {
+    return _$initSharedPreferencesAsyncAction
+        .run(() => super.initSharedPreferences());
+  }
+
   final _$getDesktopWallpapersAsyncAction =
       AsyncAction('_HomeController.getDesktopWallpapers');
 
@@ -100,7 +124,8 @@ mixin _$HomeController on _HomeController, Store {
 isLoadingDesktopWallpapers: ${isLoadingDesktopWallpapers},
 isLoadingMobileWallpapers: ${isLoadingMobileWallpapers},
 desktopWallpapers: ${desktopWallpapers},
-mobileWallpapers: ${mobileWallpapers}
+mobileWallpapers: ${mobileWallpapers},
+prefs: ${prefs}
     ''';
   }
 }

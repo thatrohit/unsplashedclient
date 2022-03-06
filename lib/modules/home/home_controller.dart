@@ -1,4 +1,5 @@
 import 'package:mobx/mobx.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:unsplashed_client/models/search.dart';
 import 'package:unsplashed_client/modules/home/repositories/api_client_home.dart';
 import 'package:unsplashed_client/modules/home/repositories/local_repo_home.dart';
@@ -23,6 +24,15 @@ abstract class _HomeController with Store {
 
   @observable
   SearchResult? mobileWallpapers;
+
+  @observable
+  SharedPreferences? prefs;
+
+  @action
+  Future<SharedPreferences?> initSharedPreferences() async {
+    prefs = await SharedPreferences.getInstance();
+    return prefs;
+  }
 
   @action
   Future<SearchResult?> getDesktopWallpapers({

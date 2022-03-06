@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,7 +18,6 @@ class _LoginHomeState extends State<LoginHome> {
   SharedPreferences? prefs;
   TextEditingController loginController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  FirebaseAuth auth = FirebaseAuth.instance;
   bool _showEmailValidationMessage = false;
   bool _showPasswordValidationMessage = false;
   bool _isLoading = false;
@@ -96,116 +96,125 @@ class _LoginHomeState extends State<LoginHome> {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
-                  child: TextField(
-                    cursorColor: AppColors.lightPurple,
-                    obscureText: true,
-                    controller: passwordController,
-                    onChanged: onChangePassword,
-                    decoration: InputDecoration(
-                      errorText: _showPasswordValidationMessage
-                          ? "Password must be at least 6 letters long"
-                          : null,
-                      floatingLabelBehavior: FloatingLabelBehavior.never,
-                      border: const OutlineInputBorder(),
-                      labelText: 'Password',
-                    ),
-                  ),
+                  child: defaultTargetPlatform != TargetPlatform.windows
+                      ? TextField(
+                          cursorColor: AppColors.lightPurple,
+                          obscureText: true,
+                          controller: passwordController,
+                          onChanged: onChangePassword,
+                          decoration: InputDecoration(
+                            errorText: _showPasswordValidationMessage
+                                ? "Password must be at least 6 letters long"
+                                : null,
+                            floatingLabelBehavior: FloatingLabelBehavior.never,
+                            border: const OutlineInputBorder(),
+                            labelText: 'Password',
+                          ),
+                        )
+                      : ElevatedButton(
+                          onPressed: () async {
+                            (prefs?.setString('email', (loginController.text)))
+                                ?.then((value) {
+                              print(
+                                  "prefs?.geString('email') -> ${prefs?.getString('email')}");
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => HomePage()));
+                            });
+                          },
+                          child: Text(
+                            "CONTINUE",
+                            style: AppTheme.heroTextStyle,
+                          )),
                 ),
               ),
-              Center(
-                child: !_isLoading
-                    ? Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            constraints: const BoxConstraints(
-                              minWidth: 200,
-                              maxWidth: 800,
-                            ),
-                            child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: ElevatedButton(
-                                  child: const Padding(
-                                    padding: EdgeInsets.all(12),
-                                    child: Text("Login"),
+              defaultTargetPlatform != TargetPlatform.windows
+                  ? Center(
+                      child: !_isLoading
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  constraints: const BoxConstraints(
+                                    minWidth: 200,
+                                    maxWidth: 800,
                                   ),
-                                  onPressed: () async {
-                                    validate();
-                                    if (_showEmailValidationMessage ||
-                                        _showPasswordValidationMessage) return;
-                                    UserCredential? userCredential;
-                                    userCredential = await loginUser(
-                                        userCredential, context);
-                                    if (userCredential?.user?.uid != null) {
-                                      // final prefs =
-                                      //     await SharedPreferences.getInstance();
-                                      // await prefs.setString(
-                                      //     'uid', (userCredential?.user?.uid)!);
-                                      // await prefs.setString(
-                                      //     'username', (loginController.text));
-                                      //---------
-                                      // saveToSharedPrefs(
-                                      //         userCredential?.user?.uid ?? "",
-                                      //         userCredential?.user?.email ?? "")
-                                      //     .then((result) => Navigator.push(
-                                      //         context,
-                                      //         MaterialPageRoute(
-                                      //             builder: (context) =>
-                                      //                 HomePage())));
-                                      print(
-                                          "SUCCESS FIREBASE AUTH | prefs -> $prefs");
-                                      await prefs?.setString(
-                                          'uid', (userCredential?.user?.uid)!);
-                                      (prefs?.setString(
-                                              'email', (loginController.text)))
-                                          ?.then((value) {
-                                        print("SUCCESS -> $value");
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    HomePage())).catchError(
-                                            (_) => print("FAILED error"));
-                                      });
-                                    }
-                                  },
-                                )),
-                          ),
-                          Container(
-                            constraints: const BoxConstraints(
-                              minWidth: 200,
-                              maxWidth: 800,
-                            ),
-                            child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: ElevatedButton(
-                                  child: const Padding(
-                                    padding: EdgeInsets.all(12),
-                                    child: Text("Register"),
+                                  child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: ElevatedButton(
+                                        child: const Padding(
+                                          padding: EdgeInsets.all(12),
+                                          child: Text("Login"),
+                                        ),
+                                        onPressed: () async {
+                                          validate();
+                                          if (_showEmailValidationMessage ||
+                                              _showPasswordValidationMessage)
+                                            return;
+                                          UserCredential? userCredential;
+                                          userCredential = await loginUser(
+                                              userCredential, context);
+                                          if (userCredential?.user?.uid !=
+                                              null) {
+                                            print(
+                                                "SUCCESS FIREBASE AUTH | prefs -> $prefs");
+                                            await prefs?.setString('uid',
+                                                (userCredential?.user?.uid)!);
+                                            (prefs?.setString('email',
+                                                    (loginController.text)))
+                                                ?.then((value) {
+                                              print("SUCCESS -> $value");
+                                              Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              HomePage()))
+                                                  .catchError((_) =>
+                                                      print("FAILED error"));
+                                            });
+                                          }
+                                        },
+                                      )),
+                                ),
+                                Container(
+                                  constraints: const BoxConstraints(
+                                    minWidth: 200,
+                                    maxWidth: 800,
                                   ),
-                                  onPressed: () async {
-                                    validate();
-                                    if (_showEmailValidationMessage ||
-                                        _showPasswordValidationMessage) return;
-                                    UserCredential? userCredential;
-                                    userCredential = await registerUser(
-                                        userCredential, context);
-                                    if (userCredential?.user?.uid != null) {
-                                      showAlertWithMessage(
-                                          context,
-                                          "Successfully registered ${loginController.text}",
-                                          "Press OK to continue in the app");
-                                    }
-                                  },
-                                )),
-                          ),
-                        ],
-                      )
-                    : const Padding(
-                        padding: EdgeInsets.fromLTRB(0, 8, 0, 0),
-                        child: CircularProgressIndicator.adaptive(),
-                      ),
-              ),
+                                  child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: ElevatedButton(
+                                        child: const Padding(
+                                          padding: EdgeInsets.all(12),
+                                          child: Text("Register"),
+                                        ),
+                                        onPressed: () async {
+                                          validate();
+                                          if (_showEmailValidationMessage ||
+                                              _showPasswordValidationMessage)
+                                            return;
+                                          UserCredential? userCredential;
+                                          userCredential = await registerUser(
+                                              userCredential, context);
+                                          if (userCredential?.user?.uid !=
+                                              null) {
+                                            showAlertWithMessage(
+                                                context,
+                                                "Successfully registered ${loginController.text}",
+                                                "Press OK to continue in the app");
+                                          }
+                                        },
+                                      )),
+                                ),
+                              ],
+                            )
+                          : const Padding(
+                              padding: EdgeInsets.fromLTRB(0, 8, 0, 0),
+                              child: CircularProgressIndicator.adaptive(),
+                            ),
+                    )
+                  : Container(),
               CheckboxListTile(
                 controlAffinity: ListTileControlAffinity.leading,
                 checkColor: AppColors.primary,
