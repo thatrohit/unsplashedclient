@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:unsplashed_client/models/search.dart';
+import 'package:unsplashed_client/modules/details/details_view.dart';
 import 'package:unsplashed_client/modules/search/search_controller.dart';
 import 'package:unsplashed_client/theme/app_colors.dart';
 
@@ -15,6 +16,8 @@ class SearchView extends StatefulWidget {
 class _SearchViewState extends State<SearchView> {
   TextEditingController searchTextContoller = TextEditingController();
   SearchController searchController = SearchController();
+  bool firstRun = true;
+  int page = 1;
 
   @override
   void initState() {
@@ -23,12 +26,15 @@ class _SearchViewState extends State<SearchView> {
   }
 
   void _makeAsyncCalls() async {
-    searchController.searchWallpapers(widget.searchParam);
+    await searchController.searchWallpapers(widget.searchParam, page);
   }
 
   @override
   Widget build(BuildContext context) {
-    searchTextContoller.text = widget.searchParam;
+    if (firstRun) {
+      searchTextContoller.text = widget.searchParam;
+      firstRun = false;
+    }
     return Material(
       child: Container(
         height: MediaQuery.of(context).size.height,
@@ -39,22 +45,23 @@ class _SearchViewState extends State<SearchView> {
               end: Alignment.bottomRight),
         ),
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
+          padding: const EdgeInsets.fromLTRB(0, 40, 0, 20),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Row(
                 children: [
                   const SizedBox(
-                    width: 30,
+                    width: 8,
                   ),
                   IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: Icon(Icons.navigate_before)),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(Icons.navigate_before),
+                  ),
                   const SizedBox(
-                    width: 30,
+                    width: 8,
                   ),
                   Flexible(
                     child: Container(
@@ -66,44 +73,43 @@ class _SearchViewState extends State<SearchView> {
                         cursorColor: AppColors.lightPurple,
                         controller: searchTextContoller,
                         decoration: InputDecoration(
-                            contentPadding: EdgeInsets.all(0),
-                            floatingLabelBehavior: FloatingLabelBehavior.never,
-                            fillColor: AppColors.lightPurple,
-                            prefixIcon:
-                                const Icon(Icons.search, color: Colors.white),
-                            border: InputBorder.none,
-                            labelText: 'Search...',
-                            suffixIcon: IconButton(
-                                icon: const Icon(
-                                  Icons.clear,
-                                  color: Colors.white,
-                                ),
-                                onPressed: () {
-                                  searchTextContoller.clear();
-                                  //searchContoller.clearSearch();
-                                })),
+                          contentPadding: const EdgeInsets.all(0),
+                          floatingLabelBehavior: FloatingLabelBehavior.never,
+                          fillColor: AppColors.lightPurple,
+                          prefixIcon:
+                              const Icon(Icons.search, color: Colors.white),
+                          border: InputBorder.none,
+                          labelText: 'Search...',
+                          suffixIcon: IconButton(
+                            icon: const Icon(
+                              Icons.clear,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {
+                              page = 1;
+                              searchTextContoller.clear();
+                              searchController.clearSearch();
+                            },
+                          ),
+                        ),
                       ),
                     ),
                   ),
                   const SizedBox(
-                    width: 30,
+                    width: 8,
                   ),
                   ElevatedButton(
-                    style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                            AppColors.primary)),
-                    onPressed: () async {
-                      //searchContoller.clearSearch();
-                      //await controller.getWeather(textController.text);
-                    },
-                    child: const Padding(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 14.0, horizontal: 20),
-                      child: Text('GO'),
-                    ),
-                  ),
+                      style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              AppColors.primary)),
+                      onPressed: () async {
+                        page = 1;
+                        await searchController.searchWallpapers(
+                            searchTextContoller.text, page);
+                      },
+                      child: const Text('GO')),
                   const SizedBox(
-                    width: 30,
+                    width: 8,
                   ),
                 ],
               ),
@@ -111,37 +117,106 @@ class _SearchViewState extends State<SearchView> {
                 padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
                 child: Divider(),
               ),
-              Expanded(
+              PhotoGrid(searchController: searchController),
+              SizedBox(
+                height: 30,
                 child: Observer(
-                  builder: (_) => searchController.isLoading
-                      ? const Center(
-                          child: CircularProgressIndicator.adaptive(),
-                        )
-                      : GridView.count(
-                          crossAxisCount: searchController.getGridViewColumns(
-                            MediaQuery.of(context).size.width,
-                          ),
-                          crossAxisSpacing: 4.0,
-                          mainAxisSpacing: 4.0,
-                          children: List.generate(
-                            searchController.wallpapers?.results?.length ?? 0,
-                            (index) {
-                              return Center(
-                                child: GridItemTemplate(
-                                  height: 200,
-                                  index: index,
-                                  results: searchController.wallpapers?.results,
-                                  width: 200,
-                                ),
-                              );
-                            },
-                          ),
+                  builder: (_) => Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(8, 12, 0, 0),
+                          child: Text("Page: $page"),
                         ),
+                      ),
+                      IconButton(
+                        disabledColor: AppColors.grayBG,
+                        onPressed: searchController.hasPrevPage
+                            ? () async {
+                                searchController.clearSearch();
+                                if (page > 1) page--;
+                                await searchController.searchWallpapers(
+                                    searchTextContoller.text, page);
+                              }
+                            : null,
+                        icon: const Icon(Icons.navigate_before),
+                      ),
+                      IconButton(
+                        disabledColor: AppColors.grayBG,
+                        onPressed: searchController.hasNextPage
+                            ? () async {
+                                searchController.clearSearch();
+                                page++;
+                                await searchController.searchWallpapers(
+                                    searchTextContoller.text, page);
+                              }
+                            : null,
+                        icon: const Icon(Icons.navigate_next),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
+              )
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class PhotoGrid extends StatelessWidget {
+  const PhotoGrid({
+    Key? key,
+    required this.searchController,
+  }) : super(key: key);
+
+  final SearchController searchController;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Observer(
+        builder: (_) => searchController.isLoading
+            ? const Center(
+                child: CircularProgressIndicator.adaptive(),
+              )
+            : GridView.count(
+                crossAxisCount: searchController.getGridViewColumns(
+                  MediaQuery.of(context).size.width,
+                ),
+                crossAxisSpacing: 4.0,
+                mainAxisSpacing: 4.0,
+                children: List.generate(
+                  searchController.wallpapers?.results?.length ?? 0,
+                  (index) {
+                    return Center(
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => DetailsView(
+                                        imageUrl: searchController
+                                                .wallpapers
+                                                ?.results?[index]
+                                                .urls
+                                                ?.regular ??
+                                            "",
+                                      )));
+                        },
+                        child: GridItemTemplate(
+                          height: 200,
+                          index: index,
+                          results: searchController.wallpapers?.results,
+                          width: 200,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
       ),
     );
   }

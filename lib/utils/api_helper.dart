@@ -23,6 +23,6 @@ mixin UnsplashedApi {
 
   static String getEndpointDetails(String id) => "/photos/$id";
 
-  static String getEndpointSearch(String query) =>
-      "/search/photos/?query=$query&order_by=latest";
+  static String getEndpointSearch(String query, int page) =>
+      "/search/photos/?query=$query&order_by=latest&page=$page";
 }

@@ -3,6 +3,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:lottie/lottie.dart';
 import 'package:unsplashed_client/models/common.dart';
 import 'package:unsplashed_client/models/search.dart';
+import 'package:unsplashed_client/modules/details/details_view.dart';
 import 'package:unsplashed_client/modules/home/home_controller.dart';
 import 'package:unsplashed_client/modules/search/search_view.dart';
 import 'package:unsplashed_client/theme/app_theme.dart';
@@ -176,12 +177,27 @@ class _HomePageState extends State<HomePage> {
                             itemBuilder: (BuildContext context, int index) =>
                                 Padding(
                               padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
-                              child: HorizontalListItemTemplate(
-                                results:
-                                    homeController.desktopWallpapers?.results,
-                                height: 200,
-                                width: 300,
-                                index: index,
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => DetailsView(
+                                                imageUrl: homeController
+                                                        .desktopWallpapers
+                                                        ?.results?[index]
+                                                        .urls
+                                                        ?.regular ??
+                                                    "",
+                                              )));
+                                },
+                                child: HorizontalListItemTemplate(
+                                  results:
+                                      homeController.desktopWallpapers?.results,
+                                  height: 200,
+                                  width: 300,
+                                  index: index,
+                                ),
                               ),
                             ),
                           ),
@@ -206,12 +222,27 @@ class _HomePageState extends State<HomePage> {
                             itemBuilder: (BuildContext context, int index) =>
                                 Padding(
                               padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
-                              child: HorizontalListItemTemplate(
-                                results:
-                                    homeController.mobileWallpapers?.results,
-                                height: 300,
-                                width: 220,
-                                index: index,
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => DetailsView(
+                                                imageUrl: homeController
+                                                        .mobileWallpapers
+                                                        ?.results?[index]
+                                                        .urls
+                                                        ?.regular ??
+                                                    "",
+                                              )));
+                                },
+                                child: HorizontalListItemTemplate(
+                                  results:
+                                      homeController.mobileWallpapers?.results,
+                                  height: 300,
+                                  width: 220,
+                                  index: index,
+                                ),
                               ),
                             ),
                           ),

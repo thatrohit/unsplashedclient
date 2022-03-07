@@ -39,20 +39,66 @@ mixin _$SearchController on _SearchController, Store {
     });
   }
 
+  final _$hasNextPageAtom = Atom(name: '_SearchController.hasNextPage');
+
+  @override
+  bool get hasNextPage {
+    _$hasNextPageAtom.reportRead();
+    return super.hasNextPage;
+  }
+
+  @override
+  set hasNextPage(bool value) {
+    _$hasNextPageAtom.reportWrite(value, super.hasNextPage, () {
+      super.hasNextPage = value;
+    });
+  }
+
+  final _$hasPrevPageAtom = Atom(name: '_SearchController.hasPrevPage');
+
+  @override
+  bool get hasPrevPage {
+    _$hasPrevPageAtom.reportRead();
+    return super.hasPrevPage;
+  }
+
+  @override
+  set hasPrevPage(bool value) {
+    _$hasPrevPageAtom.reportWrite(value, super.hasPrevPage, () {
+      super.hasPrevPage = value;
+    });
+  }
+
   final _$searchWallpapersAsyncAction =
       AsyncAction('_SearchController.searchWallpapers');
 
   @override
-  Future<SearchResult?> searchWallpapers(String query) {
+  Future<SearchResult?> searchWallpapers(String query, int page) {
     return _$searchWallpapersAsyncAction
-        .run(() => super.searchWallpapers(query));
+        .run(() => super.searchWallpapers(query, page));
+  }
+
+  final _$_SearchControllerActionController =
+      ActionController(name: '_SearchController');
+
+  @override
+  SearchResult? clearSearch() {
+    final _$actionInfo = _$_SearchControllerActionController.startAction(
+        name: '_SearchController.clearSearch');
+    try {
+      return super.clearSearch();
+    } finally {
+      _$_SearchControllerActionController.endAction(_$actionInfo);
+    }
   }
 
   @override
   String toString() {
     return '''
 isLoading: ${isLoading},
-wallpapers: ${wallpapers}
+wallpapers: ${wallpapers},
+hasNextPage: ${hasNextPage},
+hasPrevPage: ${hasPrevPage}
     ''';
   }
 }

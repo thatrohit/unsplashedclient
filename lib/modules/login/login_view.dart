@@ -43,8 +43,6 @@ class _LoginHomeState extends State<LoginHome> {
 
   @override
   Widget build(BuildContext context) {
-    loginController.text = 'rohitgupta88@outlook.com';
-    passwordController.text = 'unreal@123';
     return Material(
       child: SingleChildScrollView(
         child: Container(
@@ -61,6 +59,7 @@ class _LoginHomeState extends State<LoginHome> {
                   padding: const EdgeInsets.fromLTRB(12, 50, 0, 0),
                   child: Lottie.network(
                       'https://assets1.lottiefiles.com/packages/lf20_hymrcjeq.json',
+                      animate: false,
                       width: 200,
                       height: 200),
                 ),
