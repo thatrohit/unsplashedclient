@@ -26,7 +26,7 @@ class UnsplashedClientApp extends StatelessWidget {
         scrollBehavior: UnsplashedCustomScrollBehavior(),
         theme: AppTheme.appTheme,
         home: const Scaffold(
-          body: LoginHome(),
-        ));
+            body: SearchView(searchParam: "flutter") //LoginHome(),
+            ));
   }
 }

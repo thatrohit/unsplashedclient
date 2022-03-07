@@ -48,6 +48,14 @@ class _SearchViewState extends State<SearchView> {
                   const SizedBox(
                     width: 30,
                   ),
+                  IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: Icon(Icons.navigate_before)),
+                  const SizedBox(
+                    width: 30,
+                  ),
                   Flexible(
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -99,6 +107,10 @@ class _SearchViewState extends State<SearchView> {
                   ),
                 ],
               ),
+              const Padding(
+                padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                child: Divider(),
+              ),
               Expanded(
                 child: Observer(
                   builder: (_) => searchController.isLoading
@@ -110,7 +122,7 @@ class _SearchViewState extends State<SearchView> {
                             MediaQuery.of(context).size.width,
                           ),
                           crossAxisSpacing: 4.0,
-                          mainAxisSpacing: 8.0,
+                          mainAxisSpacing: 4.0,
                           children: List.generate(
                             searchController.wallpapers?.results?.length ?? 0,
                             (index) {
