@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:unsplashed_client/modules/home/home_view.dart';
 import 'package:unsplashed_client/theme/app_colors.dart';
 import 'package:unsplashed_client/theme/app_theme.dart';
+import 'package:unsplashed_client/utils/helpers.dart';
 
 class LoginHome extends StatefulWidget {
   const LoginHome({Key? key}) : super(key: key);
@@ -96,8 +97,7 @@ class _LoginHomeState extends State<LoginHome> {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
-                  child: defaultTargetPlatform == TargetPlatform.windows &&
-                          kIsWeb
+                  child: Helpers.isFirebaseSupported()
                       ? TextField(
                           cursorColor: AppColors.lightPurple,
                           obscureText: true,
@@ -130,7 +130,7 @@ class _LoginHomeState extends State<LoginHome> {
                           )),
                 ),
               ),
-              defaultTargetPlatform == TargetPlatform.windows && kIsWeb
+              Helpers.isFirebaseSupported()
                   ? Center(
                       child: !_isLoading
                           ? Row(

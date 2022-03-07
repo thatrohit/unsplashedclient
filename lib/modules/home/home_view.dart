@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:lottie/lottie.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:unsplashed_client/models/common.dart';
 import 'package:unsplashed_client/models/search.dart';
 import 'package:unsplashed_client/modules/home/home_controller.dart';
+import 'package:unsplashed_client/modules/search/search_view.dart';
 import 'package:unsplashed_client/theme/app_theme.dart';
 import 'package:unsplashed_client/utils/helpers.dart';
 
@@ -28,22 +29,33 @@ class _HomePageState extends State<HomePage> {
   Future<void> _makeInitAsyncCalls() async {
     await homeController.initSharedPreferences().then((value) async {
       var useLocalRepo = value?.getBool('useLocalRepo') ?? false;
-      await homeController.getDesktopWallpapers(
-          repository:
-              useLocalRepo ? ResponseRepository.local : ResponseRepository.web);
-      await homeController.getMobileWallpapers(
-          repository:
-              useLocalRepo ? ResponseRepository.local : ResponseRepository.web);
+      await homeController
+          .getDesktopWallpapers(
+              repository: useLocalRepo
+                  ? ResponseRepository.local
+                  : ResponseRepository.web)
+          .then((value) => value?.results?.add(Results(
+                id: "show-more",
+                urls: Urls(small: 'assets/next.png'),
+              )));
+      await homeController
+          .getMobileWallpapers(
+              repository: useLocalRepo
+                  ? ResponseRepository.local
+                  : ResponseRepository.web)
+          .then((value) => value?.results?.add(Results(
+                id: "show-more",
+                urls: Urls(small: 'assets/next.png'),
+              )));
+      ;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Material(
+    return Material(
+      child: SingleChildScrollView(
         child: Container(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
           decoration: const BoxDecoration(
               gradient: LinearGradient(
                   colors: AppColors.bgGradient,
@@ -64,7 +76,7 @@ class _HomePageState extends State<HomePage> {
                       height: 200,
                     ),
                     subtitle: const Text(
-                      "You don't have any favorite images yet",
+                      "You don't have any liked images yet",
                       style: TextStyle(
                         fontSize: 12,
                       ),
@@ -84,6 +96,66 @@ class _HomePageState extends State<HomePage> {
                       },
                     ),
                   ),
+                ),
+                Row(
+                  children: [
+                    Flexible(
+                      flex: 1,
+                      child: Container(
+                        constraints: const BoxConstraints(
+                          minHeight: 100,
+                        ),
+                        child: Align(
+                          child: TextButton.icon(
+                            icon: const Icon(
+                              Icons.search,
+                            ),
+                            label: Text(
+                              "SEARCH",
+                              style: AppTheme.heroTextStyle,
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          SearchView(searchParam: "")));
+                            },
+                          ),
+                          alignment: Alignment.center,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
+                      child: Container(
+                        color: Colors.grey,
+                        constraints: const BoxConstraints(
+                          minHeight: 100,
+                          maxWidth: 1,
+                        ),
+                      ),
+                    ),
+                    Flexible(
+                      flex: 1,
+                      child: Container(
+                        constraints: const BoxConstraints(
+                          minHeight: 100,
+                        ),
+                        child: Align(
+                          child: TextButton.icon(
+                            icon: Icon(Icons.favorite),
+                            label: Text(
+                              "LIKES",
+                              style: AppTheme.heroTextStyle,
+                            ),
+                            onPressed: () {},
+                          ),
+                          alignment: Alignment.center,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 NamedDivider(
                   "DESKTOP",
@@ -178,10 +250,26 @@ class HorizontalListItemTemplate extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(4),
-            child: Image(
-              fit: BoxFit.cover,
-              image: NetworkImage(results?[index].urls?.small ?? ""),
-            ),
+            child: results?[index].id != "show-more"
+                ? Image(
+                    fit: BoxFit.cover,
+                    image: NetworkImage(results?[index].urls?.small ?? ""),
+                  )
+                : IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  SearchView(searchParam: "wallpapers")));
+                    },
+                    icon: Image(
+                      height: 40,
+                      width: 40,
+                      fit: BoxFit.scaleDown,
+                      image: AssetImage(results?[index].urls?.small ?? ""),
+                    ),
+                  ),
           ),
           Positioned(
             bottom: 0,

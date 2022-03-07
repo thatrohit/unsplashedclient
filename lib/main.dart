@@ -3,11 +3,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:unsplashed_client/firebase_options.dart';
 import 'package:unsplashed_client/modules/login/login_view.dart';
+import 'package:unsplashed_client/modules/search/search_view.dart';
 import 'package:unsplashed_client/theme/app_theme.dart';
+import 'package:unsplashed_client/utils/helpers.dart';
 import 'package:unsplashed_client/utils/scroll_behavior.dart';
 
 void main() async {
-  if (defaultTargetPlatform == TargetPlatform.windows && kIsWeb) {
+  if (Helpers.isFirebaseSupported()) {
     WidgetsFlutterBinding.ensureInitialized();
     await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform);

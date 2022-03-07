@@ -22,4 +22,7 @@ mixin UnsplashedApi {
       'assets/mock/mobile_wallpapers.json';
 
   static String getEndpointDetails(String id) => "/photos/$id";
+
+  static String getEndpointSearch(String query) =>
+      "/search/photos/?query=$query&order_by=latest";
 }

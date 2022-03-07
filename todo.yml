@@ -7,7 +7,29 @@ Third_March_Thursday:
     5: 'validation ✅'
 
 Fourth_March_Friday:
-    1: Write API code - home screen ✅
-    2. Write API code - details screen ✅
-    3. Write API code - favorite screen ✅
-    4: Start home controller store ✅
+    1: 'Write API code - home screen ✅'
+    2: 'Write API code - details screen ✅'
+    3: 'Write API code - favorite screen ✅'
+    4: 'Start home controller store ✅'
+
+Fifth_March_Saturday:
+    1: 'Finish home controller ✅'
+    2: 'Start home view ✅'
+    3: 'Fix login state logic for web, android and windows ❌'
+
+Sixth_March_Sunday:
+    1: 'Fix login state logic for web, android and windows ✅'
+    2: 'Finish home view ❌'
+    3: 'Start details view' ❌'
+
+Seventh_March_Monday:
+    1: 'Finish search view / controller'
+    2: 'Finish favorites view / controller'
+    3: 'Start details view'
+    4: 'Start test cases'
+    5: 'Finish home view ✅'
+
+Eighth_March_Tuesday:
+    1: 'Finish test cases'
+    2: 'Fix pending bugs'
+    3: 'Finish deatils view'
