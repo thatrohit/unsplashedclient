@@ -58,8 +58,9 @@ class _LoginHomeState extends State<LoginHome> {
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(12, 50, 0, 0),
                   child: Lottie.network(
-                      'https://assets1.lottiefiles.com/packages/lf20_hymrcjeq.json',
-                      animate: false,
+                      'https://assets6.lottiefiles.com/packages/lf20_GZxjzF.json',
+                      animate: true,
+                      repeat: false,
                       width: 200,
                       height: 200),
                 ),
