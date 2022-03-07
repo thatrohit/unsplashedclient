@@ -37,12 +37,15 @@ class _DetailsViewState extends State<DetailsView> {
                   ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(8.0, 40, 0, 0),
-                    child: IconButton(
-                      alignment: Alignment.topLeft,
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: const Icon(Icons.navigate_before),
+                    child: Semantics(
+                      label: "go back",
+                      child: IconButton(
+                        alignment: Alignment.topLeft,
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        icon: const Icon(Icons.navigate_before),
+                      ),
                     ),
                   ),
                 ],

@@ -55,18 +55,22 @@ class _LoginHomeState extends State<LoginHome> {
           child: Column(
             children: [
               Center(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(12, 50, 0, 0),
-                  child: Lottie.network(
-                      'https://assets6.lottiefiles.com/packages/lf20_GZxjzF.json',
-                      animate: true,
-                      repeat: false,
-                      width: 200,
-                      height: 200),
+                child: Semantics(
+                  label: 'Hero Image',
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(12, 50, 0, 0),
+                    child: Lottie.network(
+                        'https://assets6.lottiefiles.com/packages/lf20_GZxjzF.json',
+                        animate: true,
+                        repeat: false,
+                        width: 200,
+                        height: 200),
+                  ),
                 ),
               ),
               Text(
                 "UNSPLASHED",
+                semanticsLabel: 'unsplashed',
                 style: AppTheme.heroTextStyle,
                 textAlign: TextAlign.center,
               ),

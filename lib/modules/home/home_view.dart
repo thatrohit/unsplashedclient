@@ -88,13 +88,16 @@ class _HomePageState extends State<HomePage> {
                         fontSize: 12,
                       ),
                     ),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.logout),
-                      onPressed: () {
-                        homeController.prefs?.remove('email');
-                        homeController.prefs?.remove('uid');
-                        Navigator.pop(context);
-                      },
+                    trailing: Semantics(
+                      label: "logout",
+                      child: IconButton(
+                        icon: const Icon(Icons.logout),
+                        onPressed: () {
+                          homeController.prefs?.remove('email');
+                          homeController.prefs?.remove('uid');
+                          Navigator.pop(context);
+                        },
+                      ),
                     ),
                   ),
                 ),

@@ -23,13 +23,12 @@ Sixth_March_Sunday:
     3: 'Start details view' ❌'
 
 Seventh_March_Monday:
-    1: 'Finish search view / controller'
-    2: 'Finish favorites view / controller'
-    3: 'Start details view'
-    4: 'Start test cases'
-    5: 'Finish home view ✅'
+    1: 'Finish search view / controller ✅'
+    2: 'Finish details view / controller ✅'
+    3: 'Finish home view ✅'
+    4: 'Accessibility support ✅' 
 
 Eighth_March_Tuesday:
-    1: 'Finish test cases'
+    1: 'Finish likes view / controller'
+    1: 'Test cases'
     2: 'Fix pending bugs'
-    3: 'Finish deatils view'

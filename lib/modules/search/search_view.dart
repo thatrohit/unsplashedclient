@@ -54,11 +54,14 @@ class _SearchViewState extends State<SearchView> {
                   const SizedBox(
                     width: 8,
                   ),
-                  IconButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: const Icon(Icons.navigate_before),
+                  Semantics(
+                    label: "go back",
+                    child: IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(Icons.navigate_before),
+                    ),
                   ),
                   const SizedBox(
                     width: 8,
@@ -69,27 +72,33 @@ class _SearchViewState extends State<SearchView> {
                       decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.15),
                           borderRadius: BorderRadius.circular(30)),
-                      child: TextField(
-                        cursorColor: AppColors.lightPurple,
-                        controller: searchTextContoller,
-                        decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.all(0),
-                          floatingLabelBehavior: FloatingLabelBehavior.never,
-                          fillColor: AppColors.lightPurple,
-                          prefixIcon:
-                              const Icon(Icons.search, color: Colors.white),
-                          border: InputBorder.none,
-                          labelText: 'Search...',
-                          suffixIcon: IconButton(
-                            icon: const Icon(
-                              Icons.clear,
-                              color: Colors.white,
+                      child: Semantics(
+                        label: "search for wallpapers here",
+                        child: TextField(
+                          cursorColor: AppColors.lightPurple,
+                          controller: searchTextContoller,
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.all(0),
+                            floatingLabelBehavior: FloatingLabelBehavior.never,
+                            fillColor: AppColors.lightPurple,
+                            prefixIcon:
+                                const Icon(Icons.search, color: Colors.white),
+                            border: InputBorder.none,
+                            labelText: 'Search...',
+                            suffixIcon: Semantics(
+                              label: "clear search text",
+                              child: IconButton(
+                                icon: const Icon(
+                                  Icons.clear,
+                                  color: Colors.white,
+                                ),
+                                onPressed: () {
+                                  page = 1;
+                                  searchTextContoller.clear();
+                                  searchController.clearSearch();
+                                },
+                              ),
                             ),
-                            onPressed: () {
-                              page = 1;
-                              searchTextContoller.clear();
-                              searchController.clearSearch();
-                            },
                           ),
                         ),
                       ),
