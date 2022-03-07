@@ -136,60 +136,49 @@ class _LoginHomeState extends State<LoginHome> {
                           ? Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Container(
-                                  constraints: const BoxConstraints(
-                                    minWidth: 200,
-                                    maxWidth: 800,
-                                  ),
+                                Flexible(
+                                  fit: FlexFit.tight,
                                   child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: ElevatedButton(
-                                        child: const Padding(
-                                          padding: EdgeInsets.all(12),
-                                          child: Text("Login"),
-                                        ),
-                                        onPressed: () async {
-                                          validate();
-                                          if (_showEmailValidationMessage ||
-                                              _showPasswordValidationMessage)
-                                            return;
-                                          UserCredential? userCredential;
-                                          userCredential = await loginUser(
-                                              userCredential, context);
-                                          if (userCredential?.user?.uid !=
-                                              null) {
-                                            print(
-                                                "SUCCESS FIREBASE AUTH | prefs -> $prefs");
-                                            await prefs?.setString('uid',
-                                                (userCredential?.user?.uid)!);
-                                            (prefs?.setString('email',
-                                                    (loginController.text)))
-                                                ?.then((value) {
-                                              print("SUCCESS -> $value");
-                                              Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              HomePage()))
-                                                  .catchError((_) =>
-                                                      print("FAILED error"));
-                                            });
-                                          }
-                                        },
-                                      )),
+                                    padding:
+                                        const EdgeInsets.fromLTRB(12, 8, 4, 0),
+                                    child: ElevatedButton(
+                                      child: Text("Login"),
+                                      onPressed: () async {
+                                        validate();
+                                        if (_showEmailValidationMessage ||
+                                            _showPasswordValidationMessage)
+                                          return;
+                                        UserCredential? userCredential;
+                                        userCredential = await loginUser(
+                                            userCredential, context);
+                                        if (userCredential?.user?.uid != null) {
+                                          print(
+                                              "SUCCESS FIREBASE AUTH | prefs -> $prefs");
+                                          await prefs?.setString('uid',
+                                              (userCredential?.user?.uid)!);
+                                          (prefs?.setString('email',
+                                                  (loginController.text)))
+                                              ?.then((value) {
+                                            print("SUCCESS -> $value");
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        HomePage())).catchError(
+                                                (_) => print("FAILED error"));
+                                          });
+                                        }
+                                      },
+                                    ),
+                                  ),
                                 ),
-                                Container(
-                                  constraints: const BoxConstraints(
-                                    minWidth: 200,
-                                    maxWidth: 800,
-                                  ),
+                                Flexible(
+                                  fit: FlexFit.tight,
                                   child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
+                                      padding: const EdgeInsets.fromLTRB(
+                                          4, 8, 12, 0),
                                       child: ElevatedButton(
-                                        child: const Padding(
-                                          padding: EdgeInsets.all(12),
-                                          child: Text("Register"),
-                                        ),
+                                        child: Text("Register"),
                                         onPressed: () async {
                                           validate();
                                           if (_showEmailValidationMessage ||

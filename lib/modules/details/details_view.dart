@@ -35,12 +35,15 @@ class _DetailsViewState extends State<DetailsView> {
                     resetDuration: const Duration(milliseconds: 100),
                     maxScale: 2.5,
                   ),
-                  IconButton(
-                    alignment: Alignment.topLeft,
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: const Icon(Icons.navigate_before),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(8.0, 40, 0, 0),
+                    child: IconButton(
+                      alignment: Alignment.topLeft,
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(Icons.navigate_before),
+                    ),
                   ),
                 ],
               ),
@@ -61,7 +64,7 @@ class _DetailsViewState extends State<DetailsView> {
                             Icons.download,
                           ),
                           label: Text(
-                            "DOWNLOAD",
+                            "SAVE",
                             style: AppTheme.heroTextStyle,
                           ),
                           onPressed: () async {
