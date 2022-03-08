@@ -19,6 +19,7 @@ class DetailsView extends StatefulWidget {
 class _DetailsViewState extends State<DetailsView> {
   DetailsController detailsController = DetailsController();
   dynamic firebaseObject;
+  bool favStateChanged = false;
 
   @override
   void initState() {
@@ -58,7 +59,7 @@ class _DetailsViewState extends State<DetailsView> {
                       child: IconButton(
                         alignment: Alignment.topLeft,
                         onPressed: () {
-                          Navigator.pop(context);
+                          Navigator.pop(context, favStateChanged);
                         },
                         icon: const Icon(Icons.navigate_before),
                       ),
@@ -129,7 +130,8 @@ class _DetailsViewState extends State<DetailsView> {
                                     ),
                                   ),
                                   onPressed: () async {
-                                    detailsController.saveToFavorite(
+                                    favStateChanged = true;
+                                    await detailsController.saveToFavorite(
                                         widget.imageDetails.keys.first,
                                         widget.imageDetails.values.first);
                                   },

@@ -10,6 +10,7 @@ import 'package:unsplashed_client/theme/app_theme.dart';
 import 'package:unsplashed_client/utils/helpers.dart';
 
 import '../../theme/app_colors.dart';
+import '../favorites/favorites_view.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
@@ -153,7 +154,12 @@ class _HomePageState extends State<HomePage> {
                               "LIKES",
                               style: AppTheme.heroTextStyle,
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => FavoritesView()));
+                            },
                           ),
                           alignment: Alignment.center,
                         ),
