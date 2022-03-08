@@ -186,12 +186,18 @@ class _HomePageState extends State<HomePage> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => DetailsView(
-                                                imageUrl: homeController
-                                                        .desktopWallpapers
-                                                        ?.results?[index]
-                                                        .urls
-                                                        ?.regular ??
-                                                    "",
+                                                imageDetails: {
+                                                  (homeController
+                                                          .desktopWallpapers
+                                                          ?.results?[index]
+                                                          .id ??
+                                                      "no-id"): (homeController
+                                                          .desktopWallpapers
+                                                          ?.results?[index]
+                                                          .urls
+                                                          ?.regular ??
+                                                      "")
+                                                },
                                               )));
                                 },
                                 child: HorizontalListItemTemplate(
@@ -231,12 +237,18 @@ class _HomePageState extends State<HomePage> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => DetailsView(
-                                                imageUrl: homeController
-                                                        .mobileWallpapers
-                                                        ?.results?[index]
-                                                        .urls
-                                                        ?.regular ??
-                                                    "",
+                                                imageDetails: {
+                                                  (homeController
+                                                          .mobileWallpapers
+                                                          ?.results?[index]
+                                                          .id ??
+                                                      "no-id"): (homeController
+                                                          .mobileWallpapers
+                                                          ?.results?[index]
+                                                          .urls
+                                                          ?.regular ??
+                                                      "")
+                                                },
                                               )));
                                 },
                                 child: HorizontalListItemTemplate(

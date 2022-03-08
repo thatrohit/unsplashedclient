@@ -207,12 +207,16 @@ class PhotoGrid extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => DetailsView(
-                                        imageUrl: searchController
-                                                .wallpapers
-                                                ?.results?[index]
-                                                .urls
-                                                ?.regular ??
-                                            "",
+                                        imageDetails: {
+                                          (searchController.wallpapers
+                                                  ?.results?[index].id ??
+                                              "no-id"): (searchController
+                                                  .wallpapers
+                                                  ?.results?[index]
+                                                  .urls
+                                                  ?.regular ??
+                                              "")
+                                        },
                                       )));
                         },
                         child: GridItemTemplate(

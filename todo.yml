@@ -29,6 +29,8 @@ Seventh_March_Monday:
     4: 'Accessibility support ✅' 
 
 Eighth_March_Tuesday:
-    1: 'Finish likes view / controller'
-    1: 'Test cases'
-    2: 'Fix pending bugs'
+    1: 'Finish likes view / controller with firebase integration'
+    2: 'Test cases'
+
+Ninth_March_Wednesday:
+    1: 'Finishing touches'
