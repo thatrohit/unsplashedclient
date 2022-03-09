@@ -30,7 +30,8 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _makeInitAsyncCalls() async {
     await homeController.initSharedPreferences().then((value) async {
-      var useLocalRepo = value?.getBool('useLocalRepo') ?? false;
+      bool useLocalRepo =
+          (value?.getString('useLocalRepo') ?? "false") == "true";
       await homeController
           .getDesktopWallpapers(
               repository: useLocalRepo
@@ -49,8 +50,8 @@ class _HomePageState extends State<HomePage> {
                 id: "show-more",
                 urls: Urls(small: 'assets/next.png'),
               )));
-      ;
     });
+    await homeController.updateHeaderText();
   }
 
   @override
@@ -72,15 +73,22 @@ class _HomePageState extends State<HomePage> {
                   builder: (_) => ListTile(
                     visualDensity: VisualDensity.adaptivePlatformDensity,
                     tileColor: AppColors.lightPurple,
-                    leading: Lottie.network(
-                      'https://assets2.lottiefiles.com/packages/lf20_jX856c.json',
-                      repeat: false,
-                      height: 200,
+                    leading: SizedBox(
+                      child: Image.asset('assets/logo.png'),
+                      height: 60,
+                      width: 60,
                     ),
-                    subtitle: const Text(
-                      "You don't have any liked images yet",
-                      style: TextStyle(
-                        fontSize: 12,
+                    // Lottie.network(
+                    //   'https://assets2.lottiefiles.com/packages/lf20_jX856c.json',
+                    //   repeat: false,
+                    //   height: 200,
+                    // ),
+                    subtitle: Observer(
+                      builder: (_) => Text(
+                        homeController.headerText,
+                        style: const TextStyle(
+                          fontSize: 12,
+                        ),
                       ),
                     ),
                     title: Text(
@@ -96,6 +104,7 @@ class _HomePageState extends State<HomePage> {
                         onPressed: () {
                           homeController.prefs?.remove('email');
                           homeController.prefs?.remove('uid');
+                          homeController.prefs?.remove('useLocalRepo');
                           Navigator.pop(context);
                         },
                       ),
@@ -124,7 +133,9 @@ class _HomePageState extends State<HomePage> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) =>
-                                          SearchView(searchParam: "")));
+                                          SearchView(searchParam: ""))).then(
+                                  (value) async =>
+                                      await homeController.updateHeaderText());
                             },
                           ),
                           alignment: Alignment.center,
@@ -158,7 +169,10 @@ class _HomePageState extends State<HomePage> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => FavoritesView()));
+                                      builder: (context) =>
+                                          FavoritesView())).then(
+                                  (value) async =>
+                                      await homeController.updateHeaderText());
                             },
                           ),
                           alignment: Alignment.center,
@@ -204,7 +218,8 @@ class _HomePageState extends State<HomePage> {
                                                           ?.regular ??
                                                       "")
                                                 },
-                                              )));
+                                              ))).then((value) async =>
+                                      await homeController.updateHeaderText());
                                 },
                                 child: HorizontalListItemTemplate(
                                   results:
@@ -255,7 +270,8 @@ class _HomePageState extends State<HomePage> {
                                                           ?.regular ??
                                                       "")
                                                 },
-                                              )));
+                                              ))).then((value) async =>
+                                      await homeController.updateHeaderText());
                                 },
                                 child: HorizontalListItemTemplate(
                                   results:
@@ -279,7 +295,8 @@ class _HomePageState extends State<HomePage> {
 }
 
 class HorizontalListItemTemplate extends StatelessWidget {
-  const HorizontalListItemTemplate({
+  HomeController homeController = HomeController();
+  HorizontalListItemTemplate({
     Key? key,
     required this.results,
     required this.index,
@@ -313,7 +330,9 @@ class HorizontalListItemTemplate extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                               builder: (context) =>
-                                  SearchView(searchParam: "wallpapers")));
+                                  SearchView(searchParam: "wallpapers"))).then(
+                          (value) async =>
+                              await homeController.updateHeaderText());
                     },
                     icon: Image(
                       height: 40,

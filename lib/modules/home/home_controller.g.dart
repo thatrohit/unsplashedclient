@@ -9,6 +9,21 @@ part of 'home_controller.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$HomeController on _HomeController, Store {
+  final _$headerTextAtom = Atom(name: '_HomeController.headerText');
+
+  @override
+  String get headerText {
+    _$headerTextAtom.reportRead();
+    return super.headerText;
+  }
+
+  @override
+  set headerText(String value) {
+    _$headerTextAtom.reportWrite(value, super.headerText, () {
+      super.headerText = value;
+    });
+  }
+
   final _$isLoadingDesktopWallpapersAtom =
       Atom(name: '_HomeController.isLoadingDesktopWallpapers');
 
@@ -118,9 +133,18 @@ mixin _$HomeController on _HomeController, Store {
         .run(() => super.getMobileWallpapers(repository: repository));
   }
 
+  final _$updateHeaderTextAsyncAction =
+      AsyncAction('_HomeController.updateHeaderText');
+
+  @override
+  Future<String> updateHeaderText() {
+    return _$updateHeaderTextAsyncAction.run(() => super.updateHeaderText());
+  }
+
   @override
   String toString() {
     return '''
+headerText: ${headerText},
 isLoadingDesktopWallpapers: ${isLoadingDesktopWallpapers},
 isLoadingMobileWallpapers: ${isLoadingMobileWallpapers},
 desktopWallpapers: ${desktopWallpapers},

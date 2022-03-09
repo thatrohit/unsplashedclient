@@ -49,6 +49,8 @@ dependencies:
 dev_dependencies:
   build_runner: ^2.1.7
   mobx_codegen: ^2.0.5+2
+  firebase_auth_mocks: 0.8.2 
+  firebase_storage_mocks: 0.5.0 
   flutter_test:
     sdk: flutter
 
@@ -69,6 +71,7 @@ flutter:
     - assets/mock/mobile_wallpapers.json
     - assets/ps.png
     - assets/next.png
+    - assets/logo.png
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

@@ -1,9 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:lottie/lottie.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:unsplashed_client/models/firebase_result.dart';
 import 'package:unsplashed_client/modules/home/home_view.dart';
+import 'package:unsplashed_client/modules/login/login_controller.dart';
 import 'package:unsplashed_client/theme/app_colors.dart';
 import 'package:unsplashed_client/theme/app_theme.dart';
 import 'package:unsplashed_client/utils/helpers.dart';
@@ -16,12 +16,9 @@ class LoginHome extends StatefulWidget {
 }
 
 class _LoginHomeState extends State<LoginHome> {
-  SharedPreferences? prefs;
-  TextEditingController loginController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-  bool _showEmailValidationMessage = false;
-  bool _showPasswordValidationMessage = false;
-  bool _isLoading = false;
+  LoginController loginController = LoginController();
+  TextEditingController loginTextController = TextEditingController();
+  TextEditingController passwordTextController = TextEditingController();
   bool _useLocalRepo = false;
 
   @override
@@ -31,14 +28,7 @@ class _LoginHomeState extends State<LoginHome> {
   }
 
   void _makeAsyncCalls() async {
-    prefs = await SharedPreferences.getInstance();
-  }
-
-  bool validateEmail(String email) {
-    bool emailValid = RegExp(
-            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-        .hasMatch(email);
-    return emailValid;
+    await loginController.getSharedPreferences();
   }
 
   @override
@@ -58,14 +48,19 @@ class _LoginHomeState extends State<LoginHome> {
                 child: Semantics(
                   label: 'Hero Image',
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(12, 50, 0, 0),
-                    child: Lottie.network(
-                        'https://assets6.lottiefiles.com/packages/lf20_GZxjzF.json',
-                        animate: true,
-                        repeat: false,
+                      padding: const EdgeInsets.fromLTRB(12, 50, 0, 0),
+                      child: SizedBox(
+                        child: Image.asset('assets/logo.png'),
+                        height: 200,
                         width: 200,
-                        height: 200),
-                  ),
+                      )
+                      // Lottie.network(
+                      //     'https://assets6.lottiefiles.com/packages/lf20_GZxjzF.json',
+                      //     animate: true,
+                      //     repeat: false,
+                      //     width: 200,
+                      //     height: 200),
+                      ),
                 ),
               ),
               Text(
@@ -80,17 +75,19 @@ class _LoginHomeState extends State<LoginHome> {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(12, 40, 12, 0),
-                  child: TextField(
-                    cursorColor: AppColors.lightPurple,
-                    controller: loginController,
-                    onChanged: onChangeUsername,
-                    decoration: InputDecoration(
-                      errorText: _showEmailValidationMessage
-                          ? "Invalid email address"
-                          : null,
-                      floatingLabelBehavior: FloatingLabelBehavior.never,
-                      border: const OutlineInputBorder(),
-                      labelText: 'Username',
+                  child: Observer(
+                    builder: (_) => TextField(
+                      cursorColor: AppColors.lightPurple,
+                      controller: loginTextController,
+                      onChanged: (text) => loginController.onChangeUsername(),
+                      decoration: InputDecoration(
+                        errorText: loginController.showEmailError
+                            ? "Invalid email address"
+                            : null,
+                        floatingLabelBehavior: FloatingLabelBehavior.never,
+                        border: const OutlineInputBorder(),
+                        labelText: 'Username',
+                      ),
                     ),
                   ),
                 ),
@@ -102,31 +99,33 @@ class _LoginHomeState extends State<LoginHome> {
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
                   child: Helpers.isFirebaseSupported()
-                      ? TextField(
-                          cursorColor: AppColors.lightPurple,
-                          obscureText: true,
-                          controller: passwordController,
-                          onChanged: onChangePassword,
-                          decoration: InputDecoration(
-                            errorText: _showPasswordValidationMessage
-                                ? "Password must be at least 6 letters long"
-                                : null,
-                            floatingLabelBehavior: FloatingLabelBehavior.never,
-                            border: const OutlineInputBorder(),
-                            labelText: 'Password',
+                      ? Observer(
+                          builder: (_) => TextField(
+                            cursorColor: AppColors.lightPurple,
+                            obscureText: true,
+                            controller: passwordTextController,
+                            onChanged: (text) =>
+                                loginController.onChangePassword(),
+                            decoration: InputDecoration(
+                              errorText: loginController.showPasswordError
+                                  ? "Password must be at least 6 letters long"
+                                  : null,
+                              floatingLabelBehavior:
+                                  FloatingLabelBehavior.never,
+                              border: const OutlineInputBorder(),
+                              labelText: 'Password',
+                            ),
                           ),
                         )
                       : ElevatedButton(
-                          onPressed: () async {
-                            (prefs?.setString('email', (loginController.text)))
-                                ?.then((value) {
-                              print(
-                                  "prefs?.geString('email') -> ${prefs?.getString('email')}");
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => HomePage()));
+                          onPressed: () {
+                            loginController.saveDataToSharedPreferences({
+                              'email': loginTextController.text,
                             });
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => HomePage()));
                           },
                           child: Text(
                             "CONTINUE",
@@ -135,95 +134,132 @@ class _LoginHomeState extends State<LoginHome> {
                 ),
               ),
               Helpers.isFirebaseSupported()
-                  ? Center(
-                      child: !_isLoading
-                          ? Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Flexible(
-                                  fit: FlexFit.tight,
-                                  child: Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(12, 8, 4, 0),
-                                    child: ElevatedButton(
-                                      child: Text("Login"),
-                                      onPressed: () async {
-                                        validate();
-                                        if (_showEmailValidationMessage ||
-                                            _showPasswordValidationMessage)
-                                          return;
-                                        UserCredential? userCredential;
-                                        userCredential = await loginUser(
-                                            userCredential, context);
-                                        if (userCredential?.user?.uid != null) {
-                                          print(
-                                              "SUCCESS FIREBASE AUTH | prefs -> $prefs");
-                                          await prefs?.setString('uid',
-                                              (userCredential?.user?.uid)!);
-                                          (prefs?.setString('email',
-                                                  (loginController.text)))
-                                              ?.then((value) {
-                                            print("SUCCESS -> $value");
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        HomePage())).catchError(
-                                                (_) => print("FAILED error"));
-                                          });
-                                        }
-                                      },
+                  ? Observer(
+                      builder: (_) => Center(
+                        child: !(loginController.isLoading)
+                            ? Container(
+                                constraints: const BoxConstraints(
+                                  maxWidth: 800,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Flexible(
+                                      fit: FlexFit.tight,
+                                      child: Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            12, 8, 4, 0),
+                                        child: ElevatedButton(
+                                          child: const Text("Login"),
+                                          onPressed: () async {
+                                            loginController.validate(
+                                                loginTextController.text,
+                                                passwordTextController.text);
+                                            if (loginController
+                                                    .showEmailError ||
+                                                loginController
+                                                    .showPasswordError) {
+                                              return;
+                                            }
+
+                                            FirebaseAuthResult result =
+                                                await loginController.loginUser(
+                                                    context,
+                                                    loginTextController.text,
+                                                    passwordTextController
+                                                        .text);
+                                            if (result.errorMessage != null) {
+                                              showAlertWithMessage(
+                                                  context, result.errorMessage);
+                                              return;
+                                            } else {
+                                              await loginController
+                                                  .saveDataToSharedPreferences(
+                                                {
+                                                  'uid': result.userCredential
+                                                          ?.user?.uid ??
+                                                      "",
+                                                  'email':
+                                                      loginTextController.text
+                                                },
+                                              );
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          HomePage()));
+                                            }
+                                          },
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                    Flexible(
+                                      fit: FlexFit.tight,
+                                      child: Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              4, 8, 12, 0),
+                                          child: ElevatedButton(
+                                            child: const Text("Register"),
+                                            onPressed: () async {
+                                              loginController.validate(
+                                                  loginTextController.text,
+                                                  passwordTextController.text);
+                                              if (loginController
+                                                      .showEmailError ||
+                                                  loginController
+                                                      .showPasswordError) {
+                                                return;
+                                              }
+                                              FirebaseAuthResult? result =
+                                                  await loginController
+                                                      .registerUser(
+                                                          loginTextController
+                                                              .text,
+                                                          passwordTextController
+                                                              .text,
+                                                          context);
+                                              if (result?.errorMessage !=
+                                                  null) {
+                                                showAlertWithMessage(
+                                                  context,
+                                                  "Press login to continue in the app",
+                                                  title:
+                                                      "Successfully registered ${loginTextController.text}",
+                                                );
+                                              }
+                                            },
+                                          )),
+                                    ),
+                                  ],
                                 ),
-                                Flexible(
-                                  fit: FlexFit.tight,
-                                  child: Padding(
-                                      padding: const EdgeInsets.fromLTRB(
-                                          4, 8, 12, 0),
-                                      child: ElevatedButton(
-                                        child: Text("Register"),
-                                        onPressed: () async {
-                                          validate();
-                                          if (_showEmailValidationMessage ||
-                                              _showPasswordValidationMessage)
-                                            return;
-                                          UserCredential? userCredential;
-                                          userCredential = await registerUser(
-                                              userCredential, context);
-                                          if (userCredential?.user?.uid !=
-                                              null) {
-                                            showAlertWithMessage(
-                                                context,
-                                                "Successfully registered ${loginController.text}",
-                                                "Press OK to continue in the app");
-                                          }
-                                        },
-                                      )),
-                                ),
-                              ],
-                            )
-                          : const Padding(
-                              padding: EdgeInsets.fromLTRB(0, 8, 0, 0),
-                              child: CircularProgressIndicator.adaptive(),
-                            ),
+                              )
+                            : const Padding(
+                                padding: EdgeInsets.fromLTRB(0, 8, 0, 0),
+                                child: CircularProgressIndicator.adaptive(),
+                              ),
+                      ),
                     )
                   : Container(),
-              CheckboxListTile(
-                controlAffinity: ListTileControlAffinity.leading,
-                checkColor: AppColors.primary,
-                activeColor: AppColors.lightRed,
-                title: const Text(
-                    'Check this to use local json instead Unsplash API'),
-                value: _useLocalRepo,
-                onChanged: (bool? value) async {
-                  setState(() {
-                    _useLocalRepo = value ?? false;
-                    print("check change -> $value");
-                  });
-                  final prefs = await SharedPreferences.getInstance();
-                  await prefs.setBool('useLocalRepo', value ?? true);
-                },
+              Container(
+                constraints: const BoxConstraints(
+                  maxWidth: 800,
+                ),
+                child: CheckboxListTile(
+                  controlAffinity: ListTileControlAffinity.leading,
+                  checkColor: AppColors.primary,
+                  activeColor: AppColors.lightRed,
+                  title: const Text(
+                      'Check this to use local json instead Unsplash API'),
+                  value: _useLocalRepo,
+                  onChanged: (bool? value) async {
+                    setState(() {
+                      _useLocalRepo = value ?? false;
+                      print("check change -> $value");
+                    });
+                    await loginController.saveDataToSharedPreferences(
+                        {'useLocalRepo': (value ?? false).toString()});
+                  },
+                ),
               ),
               Expanded(
                 child: Align(
@@ -250,92 +286,11 @@ class _LoginHomeState extends State<LoginHome> {
     );
   }
 
-  Future<UserCredential?> loginUser(
-      UserCredential? userCredential, BuildContext context) async {
-    setState(() {
-      _isLoading = true;
-    });
-    try {
-      userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: loginController.text, password: passwordController.text);
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        showAlertWithMessage(
-            context, "Something went wrong", "No user found for that email.");
-      } else if (e.code == 'wrong-password') {
-        showAlertWithMessage(
-            context, "Something went wrong", "email or password is incorrect.");
-      }
-    }
-    setState(() {
-      _isLoading = false;
-    });
-    return userCredential;
-  }
-
-  Future<UserCredential?> registerUser(
-      UserCredential? userCredential, BuildContext context) async {
-    setState(() {
-      _isLoading = true;
-    });
-    try {
-      userCredential = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(
-              email: loginController.text, password: passwordController.text);
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'weak-password') {
-        showAlertWithMessage(context, "Something went wrong",
-            "The password provided is too weak.");
-      } else if (e.code == 'email-already-in-use') {
-        showAlertWithMessage(context, "Something went wrong",
-            "The account already exists for that email.");
-      }
-    } catch (e) {
-      print(e);
-    }
-    setState(() {
-      _isLoading = false;
-    });
-    return userCredential;
-  }
-
-  void validate() {
-    setState(
-      () {
-        if (!validateEmail(loginController.text)) {
-          _showEmailValidationMessage = true;
-        } else {
-          _showEmailValidationMessage = false;
-        }
-        if (passwordController.text.length < 6) {
-          _showPasswordValidationMessage = true;
-        } else {
-          _showPasswordValidationMessage = false;
-        }
-      },
-    );
-  }
-
-  void onChangePassword(text) {
-    setState(
-      () {
-        _showPasswordValidationMessage = false;
-      },
-    );
-  }
-
-  void onChangeUsername(text) {
-    setState(
-      () {
-        _showEmailValidationMessage = false;
-      },
-    );
-  }
-
-  void showAlertWithMessage(BuildContext context, String title, String body) {
+  void showAlertWithMessage(BuildContext context, String? body,
+      {String? title}) {
     AlertDialog alert = AlertDialog(
-      title: Text(title),
-      content: Text(body),
+      title: Text(title ?? "Something went wrong"),
+      content: Text(body ?? ""),
       actions: [
         TextButton(
           child: const Text("OK"),
