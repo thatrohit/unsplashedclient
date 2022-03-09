@@ -164,7 +164,6 @@ class _LoginHomeState extends State<LoginHome> {
 
                                             FirebaseAuthResult result =
                                                 await loginController.loginUser(
-                                                    context,
                                                     loginTextController.text,
                                                     passwordTextController
                                                         .text);
@@ -216,8 +215,7 @@ class _LoginHomeState extends State<LoginHome> {
                                                           loginTextController
                                                               .text,
                                                           passwordTextController
-                                                              .text,
-                                                          context);
+                                                              .text);
                                               if (result?.errorMessage !=
                                                   null) {
                                                 showAlertWithMessage(
