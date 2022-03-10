@@ -1,6 +1,6 @@
 # unsplashed client
 
-![demo](assets/demo.png)
+![demo](assets/demo.gif)
 
 ## flutter in 10 days
 A Flutter project to demonstrate api calls and firebase integration. It uses mobx for state management.
