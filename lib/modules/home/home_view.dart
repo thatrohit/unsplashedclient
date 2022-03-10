@@ -152,8 +152,9 @@ class _HomePageState extends State<HomePage> {
                             ),
                             onPressed: () {
                               (homeController.prefs
-                                          ?.getString('useLocalRepo') ==
-                                      "false")
+                                              ?.getString('useLocalRepo') ??
+                                          "false") ==
+                                      "false"
                                   ? Navigator.push(
                                           context,
                                           MaterialPageRoute(
@@ -249,12 +250,17 @@ class _HomePageState extends State<HomePage> {
                                               ))).then((value) async =>
                                       await homeController.updateHeaderText());
                                 },
-                                child: HorizontalListItemTemplate(
-                                  results:
-                                      homeController.desktopWallpapers?.results,
-                                  height: 200,
-                                  width: 300,
-                                  index: index,
+                                child: Observer(
+                                  builder: (_) => HorizontalListItemTemplate(
+                                      results: homeController
+                                          .desktopWallpapers?.results,
+                                      height: 200,
+                                      width: 300,
+                                      index: index,
+                                      useLocalRepo: (homeController.prefs
+                                                  ?.getString('useLocalRepo') ??
+                                              "false") ==
+                                          "true"),
                                 ),
                               ),
                             ),
@@ -301,12 +307,18 @@ class _HomePageState extends State<HomePage> {
                                               ))).then((value) async =>
                                       await homeController.updateHeaderText());
                                 },
-                                child: HorizontalListItemTemplate(
-                                  results:
-                                      homeController.mobileWallpapers?.results,
-                                  height: 300,
-                                  width: 220,
-                                  index: index,
+                                child: Observer(
+                                  builder: (_) => HorizontalListItemTemplate(
+                                    results: homeController
+                                        .mobileWallpapers?.results,
+                                    height: 300,
+                                    width: 220,
+                                    index: index,
+                                    useLocalRepo: (homeController.prefs
+                                                ?.getString('useLocalRepo') ??
+                                            "false") ==
+                                        "true",
+                                  ),
                                 ),
                               ),
                             ),
@@ -330,12 +342,14 @@ class HorizontalListItemTemplate extends StatelessWidget {
     required this.index,
     required this.height,
     required this.width,
+    required this.useLocalRepo,
   }) : super(key: key);
 
   final List<Results>? results;
   final int index;
   final double height;
   final double width;
+  final bool useLocalRepo;
 
   void showAlertWithMessage(BuildContext context, String? body,
       {String? title}) {
@@ -376,7 +390,7 @@ class HorizontalListItemTemplate extends StatelessWidget {
                   )
                 : IconButton(
                     onPressed: () {
-                      homeController.prefs?.getString('useLocalRepo') == 'false'
+                      (useLocalRepo == false)
                           ? Navigator.push(
                               context,
                               MaterialPageRoute(
