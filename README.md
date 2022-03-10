@@ -3,6 +3,7 @@
 ## flutter in 10 days
 A Flutter project to demonstrate api calls and firebase integration. It uses mobx for state management.
 - User can register in the app and browse for wallpapers and stock images hosted on unsplash.
+- User can choose to use a locally saved json to use the app in case the unsplash api exceeds rate limit.
 - User can like the image to keep it in their account.
 - User can download the image, downloading opens the image in their browser from where they can right click and download.
 
