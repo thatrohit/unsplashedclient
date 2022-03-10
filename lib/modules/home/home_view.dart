@@ -337,6 +337,28 @@ class HorizontalListItemTemplate extends StatelessWidget {
   final double height;
   final double width;
 
+  void showAlertWithMessage(BuildContext context, String? body,
+      {String? title}) {
+    AlertDialog alert = AlertDialog(
+      title: Text(title ?? "Something went wrong"),
+      content: Text(body ?? ""),
+      actions: [
+        TextButton(
+          child: const Text("OK"),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    );
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -354,13 +376,16 @@ class HorizontalListItemTemplate extends StatelessWidget {
                   )
                 : IconButton(
                     onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  SearchView(searchParam: "wallpapers"))).then(
-                          (value) async =>
-                              await homeController.updateHeaderText());
+                      homeController.prefs?.getString('useLocalRepo') == 'false'
+                          ? Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => SearchView(
+                                      searchParam: "wallpapers"))).then(
+                              (value) async =>
+                                  await homeController.updateHeaderText())
+                          : showAlertWithMessage(context,
+                              "Unable to browse more when using local repo");
                     },
                     icon: Image(
                       height: 40,
