@@ -1,0 +1,36 @@
+# todo
+Third_March_Thursday:
+    1: 'initial commit with architecture ✅'
+    2: 'setup firebase ✅'
+    3: 'login home ui ✅'
+    4: 'common styles ❌'
+    5: 'validation ✅'
+
+Fourth_March_Friday:
+    1: 'Write API code - home screen ✅'
+    2: 'Write API code - details screen ✅'
+    3: 'Write API code - favorite screen ✅'
+    4: 'Start home controller store ✅'
+
+Fifth_March_Saturday:
+    1: 'Finish home controller ✅'
+    2: 'Start home view ✅'
+    3: 'Fix login state logic for web, android and windows ❌'
+
+Sixth_March_Sunday:
+    1: 'Fix login state logic for web, android and windows ✅'
+    2: 'Finish home view ❌'
+    3: 'Start details view' ❌'
+
+Seventh_March_Monday:
+    1: 'Finish search view / controller ✅'
+    2: 'Finish details view / controller ✅'
+    3: 'Finish home view ✅'
+    4: 'Accessibility support ✅ (partial)' 
+
+Eighth_March_Tuesday:
+    1: 'Finish likes view / controller with firebase integration ✅'
+    2: 'Test cases ❌(partial, needs dependency injection first)'
+
+Ninth_March_Wednesday:
+    1: 'Finishing touches ✅'
