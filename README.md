@@ -1,5 +1,7 @@
 # unsplashed client
 
+![demo](assets/demo.png)
+
 ## flutter in 10 days
 A Flutter project to demonstrate api calls and firebase integration. It uses mobx for state management.
 - User can register in the app and browse for wallpapers and stock images hosted on unsplash.
@@ -15,13 +17,13 @@ The keys for firebase and unsplash api is not pushed to repository. You can test
 
 This is what the sequence diagram looks like:
 
-![alt text](assets/unsplashed_sequence.png)
+![sequence diagram](assets/unsplashed_sequence.png)
 
 
 
 This is what the folder structure looks like:
 
-![alt text](assets/unsplashed-folder_structure.drawio.png)
+![folder structure](assets/unsplashed-folder_structure.drawio.png)
 
 Each module contains a view and a controller. 
 The view only contains code related to rendering the UI.
