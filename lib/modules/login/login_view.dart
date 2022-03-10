@@ -220,6 +220,11 @@ class _LoginHomeState extends State<LoginHome> {
                                                   null) {
                                                 showAlertWithMessage(
                                                   context,
+                                                  result?.errorMessage,
+                                                );
+                                              } else {
+                                                showAlertWithMessage(
+                                                  context,
                                                   "Press login to continue in the app",
                                                   title:
                                                       "Successfully registered ${loginTextController.text}",
