@@ -26,11 +26,11 @@ Seventh_March_Monday:
     1: 'Finish search view / controller ✅'
     2: 'Finish details view / controller ✅'
     3: 'Finish home view ✅'
-    4: 'Accessibility support ✅' 
+    4: 'Accessibility support ✅ (partial)' 
 
 Eighth_March_Tuesday:
-    1: 'Finish likes view / controller with firebase integration'
-    2: 'Test cases'
+    1: 'Finish likes view / controller with firebase integration ✅'
+    2: 'Test cases ❌(partial, needs dependency injection first)'
 
 Ninth_March_Wednesday:
-    1: 'Finishing touches'
+    1: 'Finishing touches ✅'

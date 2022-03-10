@@ -54,6 +54,28 @@ class _HomePageState extends State<HomePage> {
     await homeController.updateHeaderText();
   }
 
+  void showAlertWithMessage(BuildContext context, String? body,
+      {String? title}) {
+    AlertDialog alert = AlertDialog(
+      title: Text(title ?? "Something went wrong"),
+      content: Text(body ?? ""),
+      actions: [
+        TextButton(
+          child: const Text("OK"),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    );
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -129,13 +151,19 @@ class _HomePageState extends State<HomePage> {
                               style: AppTheme.heroTextStyle,
                             ),
                             onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          SearchView(searchParam: ""))).then(
-                                  (value) async =>
-                                      await homeController.updateHeaderText());
+                              (homeController.prefs
+                                          ?.getString('useLocalRepo') ==
+                                      "false")
+                                  ? Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  SearchView(searchParam: "")))
+                                      .then((value) async =>
+                                          await homeController
+                                              .updateHeaderText())
+                                  : showAlertWithMessage(context,
+                                      "Unable to search images when using local json");
                             },
                           ),
                           alignment: Alignment.center,
