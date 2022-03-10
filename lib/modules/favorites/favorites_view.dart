@@ -29,16 +29,18 @@ class _FavoritesViewState extends State<FavoritesView> {
   @override
   Widget build(BuildContext context) {
     return Material(
-      child: SingleChildScrollView(
-        child: Container(
-          height: MediaQuery.of(context).size.height,
-          decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                  colors: AppColors.bgGradient,
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight)),
+      child: Stack(children: [
+        SingleChildScrollView(
           child: Stack(
             children: [
+              Container(
+                height: MediaQuery.of(context).size.height,
+                decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                        colors: AppColors.bgGradient,
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight)),
+              ),
               Observer(
                 builder: (_) => favoritesController.isLoading
                     ? Center(
@@ -106,7 +108,7 @@ class _FavoritesViewState extends State<FavoritesView> {
             ],
           ),
         ),
-      ),
+      ]),
     );
   }
 }
