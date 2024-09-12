@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "663337347368",
+    "project_id": "unsplashedflutterclient",
+    "storage_bucket": "unsplashedflutterclient.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:663337347368:android:1cfb56d08178cbf882481d",
+        "android_client_info": {
+          "package_name": "com.unsplashedclient"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "663337347368-a18vmf4rbfc48nems318doh0j7u3l4nv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBnwc2-ByeB5VuWbmgeKNKIvCN0CbTdjRM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "663337347368-a18vmf4rbfc48nems318doh0j7u3l4nv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
